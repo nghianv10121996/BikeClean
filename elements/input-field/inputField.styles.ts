@@ -9,6 +9,6 @@ export const container: ViewStyle = {
 
 export const input: TextStyle = {
   fontFamily: "OpenSans-Medium",
-  fontSize: 18,
+  fontSize: 14,
   lineHeight: 24
 }

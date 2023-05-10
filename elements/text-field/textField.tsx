@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { COLORS, PRESETS } from "./textField.presets";
 import { colors } from "../../utils/theme/colors";
 
-export const textField = ({
+export const TextField = ({
   type,
   typo,
   text,
@@ -26,7 +26,7 @@ export const textField = ({
       ...colorText,
       ...style
     } as TextStyle
-  }, [style])
+  }, [style, typo])
 
 
   return (
@@ -43,4 +43,4 @@ export const textField = ({
   )
 }
 
-export default textField;
+export default TextField;

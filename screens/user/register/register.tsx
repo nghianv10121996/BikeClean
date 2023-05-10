@@ -48,7 +48,7 @@ const Register = () => {
           <InputField
             type={ETextType.BLUE}
             value={form.phoneNumber}
-            placeholder="Vui lòng nhập tài khoản hoặc số điện thoại"
+            placeholder="Vui lòng nhập tài khoản hoặc số điện thoại."
             onChangeText={onChangeTextInput("phoneNumber")}
           />
         </View>
@@ -62,7 +62,7 @@ const Register = () => {
           <InputField
             type={ETextType.BLUE}
             value={form.password}
-            placeholder="Vui lòng nhập mật khẩu"
+            placeholder="Vui lòng nhập mật khẩu."
             onChangeText={onChangeTextInput("password")}
           />
         </View>

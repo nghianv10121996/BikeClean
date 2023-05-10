@@ -1,13 +1,12 @@
-import { StatusBar } from 'expo-status-bar';
+import * as Font from 'expo-font';
+import 'react-native-gesture-handler';
+import * as SplashScreen from 'expo-splash-screen';
+import { useCallback, useEffect, useState } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import useCachedResources from './hooks/useCachedResources';
 import useColorScheme from './hooks/useColorScheme';
 import Navigation from './navigation';
 import { UserContextProvider } from './utils/Provider/UserProvider';
-import * as Font from 'expo-font';
-import { useCallback, useEffect, useState } from 'react';
-import * as SplashScreen from 'expo-splash-screen';
-import axios from 'axios';
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();

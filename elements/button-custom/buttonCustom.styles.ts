@@ -7,5 +7,5 @@ export const container: ViewStyle = {
 }
 
 export const textContainer: ViewStyle = {
-  padding: 10
+  padding: 8
 }

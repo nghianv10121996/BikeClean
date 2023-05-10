@@ -43,7 +43,7 @@ const Login = () => {
           />
           <InputField
             type={ETextType.BLUE}
-            placeholder="Vui lòng nhập mật khẩu"
+            placeholder="Vui lòng nhập mật khẩu."
             value=""
           />
         </View>

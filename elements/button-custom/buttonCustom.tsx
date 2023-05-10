@@ -6,7 +6,7 @@ import { ETextField, ETextType } from "../text-field/textField.props";
 import { EButton, IButtonCustom } from "./buttonCustom.props";
 import * as styles from "./buttonCustom.styles";
 
-export const ButtonCustom = ({ onPress, text, type, typo, style, containerStyle }: IButtonCustom) => {
+export const ButtonCustom = ({ onPress, text, type, style, containerStyle }: IButtonCustom) => {
 
   const container = useMemo(() => {
     let styles;
@@ -47,7 +47,7 @@ export const ButtonCustom = ({ onPress, text, type, typo, style, containerStyle 
         containerStyle={styles.textContainer}
         style={style}
         type={type === EButton.cancel ? ETextType.BLACK : ETextType.WHITE}
-        typo={ETextField.medium}
+        typo={ETextField.small}
         text={text}
       />
     </TouchableOpacity>
