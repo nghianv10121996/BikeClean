@@ -1,6 +1,5 @@
 import axios from 'axios';
-import { getToken } from './api/user';
-import { save, get } from "./LocalStorage/LocalStorage";
+import { get } from "./LocalStorage/LocalStorage";
 
 const instance = axios.create({
   baseURL: 'http://192.168.1.237:3000/',
