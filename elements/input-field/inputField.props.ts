@@ -10,5 +10,6 @@ export interface IInputField {
   placeholderTextColor?: string;
   style?: TextStyle | TextStyle[];
   value: string;
-  type: ETextType
+  type: ETextType,
+  isPasswordField?: boolean
 }

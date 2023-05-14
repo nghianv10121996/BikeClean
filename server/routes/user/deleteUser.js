@@ -3,7 +3,7 @@ const router = express.Router();
 const deleteUserService = require("../../service/user/deleteUserService");
 
 /* GET user. */
-router.delete('/account/:userID', async function(req, res, next) {
+router.delete('/user/:userID', async function(req, res, next) {
   try {
     res.json(await deleteUserService(req.params.userID));
   } catch (err) {

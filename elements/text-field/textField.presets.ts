@@ -32,5 +32,6 @@ export const COLORS: Record<ETextType, string> = {
   [ETextType.WHITE]: colors.white,
   [ETextType.BLACK]: colors.black,
   [ETextType.YELLOW]: colors.yellow,
-  [ETextType.BLUE]: colors.blue
+  [ETextType.BLUE]: colors.blue,
+  [ETextType.ERROR]: colors.red
 }

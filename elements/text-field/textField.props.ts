@@ -9,7 +9,8 @@ export enum ETextType {
   WHITE = "white",
   BLACK = "black",
   YELLOW = "yellow",
-  BLUE = "blue"
+  BLUE = "blue",
+  ERROR = "error"
 }
 
 export interface ITextField {
@@ -19,5 +20,6 @@ export interface ITextField {
   onPress?: () => void;
   style?: TextStyle[] | TextStyle;
   text: string,
-  containerStyle?: ViewStyle | ViewStyle[]
+  containerStyle?: ViewStyle | ViewStyle[],
+  isHavePassword?: boolean
 }

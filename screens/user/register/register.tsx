@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { View } from "react-native";
 import Icon from 'react-native-vector-icons/Ionicons';
 import ButtonCustom from "../../../elements/button-custom/buttonCustom";
@@ -12,25 +12,34 @@ import { CONSTANTS } from "../../../utils/constants/constants";
 import { colors } from "../../../utils/theme/colors";
 import * as styles from "../login/login.styles";
 import * as reStyles from "../register/register.styles";
+import ToastMarker from "../../../elements/toast-marker/ToastMaker";
+import { EToastMarker } from "../../../elements/toast-marker/ToastMaker.props";
+import { useState } from "react";
 
 const Register = () => {
-  const [form, setForm] = useState({
-    phoneNumber: "",
-    password: ""
-  })
+  const [isLoading, setIsLoading] = useState(false);
+  const { control, handleSubmit, formState: { errors } } = useForm({
+    defaultValues: {
+      phoneNumber: '',
+      password: ''
+    }
+  });
 
-  const onChangeTextInput = (fieldName: string) => (value: string) => {
-    setForm({
-      ...form,
-      [fieldName]: value
-    });
-  }
-
-  const onSubmit = async () => {
+  const onSubmit = async (form: any) => {
+    setIsLoading(true)
     try {
-      const response = await registerUser(form);
-    } catch (error) {
-      console.log(error)
+      const { message } = await registerUser(form);
+      ToastMarker({
+        type: EToastMarker.success,
+        text: message
+      })
+    } catch (error: any) {
+      ToastMarker({
+        type: EToastMarker.success,
+        text: "Đăng kí thất bại"
+      })
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -43,14 +52,33 @@ const Register = () => {
             type={ETextType.BLUE}
             typo={ETextField.small}
             style={styles.input}
-            text={"Tài khoản/SĐT: "}
+            text={"SĐT: "}
           />
-          <InputField
-            type={ETextType.BLUE}
-            value={form.phoneNumber}
-            placeholder="Vui lòng nhập tài khoản hoặc số điện thoại."
-            onChangeText={onChangeTextInput("phoneNumber")}
+          <Controller
+            control={control}
+            rules={{
+              required: true,
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <InputField
+                type={ETextType.BLUE}
+                placeholder="Nhập SĐT"
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+              />
+            )}
+            name="phoneNumber"
           />
+          {errors.phoneNumber && (
+            <TextField
+              containerStyle={styles.errorContainer}
+              style={styles.errorStyle}
+              type={ETextType.ERROR}
+              typo={ETextField.small}
+              text={"Vui Lòng nhập SĐT cho đúng."}
+            />
+          )}
         </View>
         <View style={styles.inputContainer}>
           <TextField
@@ -59,18 +87,41 @@ const Register = () => {
             style={styles.input}
             text={"Mật khẩu:"}
           />
-          <InputField
-            type={ETextType.BLUE}
-            value={form.password}
-            placeholder="Vui lòng nhập mật khẩu."
-            onChangeText={onChangeTextInput("password")}
+          <Controller
+            control={control}
+            rules={{
+              required: true,
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <InputField
+                type={ETextType.BLUE}
+                placeholder="Vui lòng nhập mật khẩu."
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+                isPasswordField={true}
+              />
+            )}
+            name="password"
           />
+          {
+            errors.password && (
+              <TextField
+                containerStyle={styles.errorContainer}
+                style={styles.errorStyle}
+                type={ETextType.ERROR}
+                typo={ETextField.small}
+                text={"Vui Lòng nhập mật khẩu cho đúng."}
+              />
+            )
+          }
         </View>
         <View style={{ ...styles.inputContainer, ...styles.btn }}>
-        <ButtonCustom
+          <ButtonCustom
             type={EButton.submit}
-            onPress={onSubmit}
+            onPress={handleSubmit(onSubmit)}
             text="Đăng kí"
+            isLoading={isLoading}
           />
           <ButtonCustom
             containerStyle={reStyles.cancelBtn}

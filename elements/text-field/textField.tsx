@@ -11,7 +11,7 @@ export const TextField = ({
   onPress,
   numberOfLines = 1,
   style,
-  containerStyle
+  containerStyle,
 }: ITextField) => {
 
   const colorText = useMemo(() => {

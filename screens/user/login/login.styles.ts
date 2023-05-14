@@ -36,3 +36,11 @@ export const register: TextStyle = {
 export const backButton: TextStyle = {
   marginTop: 20
 }
+
+export const errorContainer: ViewStyle = {
+  marginTop: 4
+}
+
+export const errorStyle: TextStyle = {
+  fontSize: 14
+}
