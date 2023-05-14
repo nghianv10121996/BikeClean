@@ -16,8 +16,8 @@ export const InputField = (props: IInputField) => {
     setIsShowPassword(!isShowPassword)
   }
 
-  const colorsIcon = useMemo(() => {
-    return isShowPassword ? colors.blue : colors.main
+  const iconName = useMemo(() => {
+    return isShowPassword ? "lock" : "unlock"
   }, [isShowPassword])
 
   return (
@@ -30,7 +30,7 @@ export const InputField = (props: IInputField) => {
       {
         !!isPasswordField && (
           <TouchableOpacity onPress={onChangeRoles}>
-            <Icon name="lock" size={25} color={colorsIcon} />
+            <Icon name={iconName} size={25} color={colors.blue} />
           </TouchableOpacity>
         )
       }
