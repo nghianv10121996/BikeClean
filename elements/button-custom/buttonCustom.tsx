@@ -1,16 +1,18 @@
 import { useMemo } from "react";
 import { TouchableOpacity, ViewStyle } from "react-native";
 import { colors } from "../../utils/theme/colors";
+import { Indicator } from "../indicator/Indicator";
+import { EIndicator } from "../indicator/Indicator.props";
 import TextField from "../text-field/textField";
 import { ETextField, ETextType } from "../text-field/textField.props";
 import { EButton, IButtonCustom } from "./buttonCustom.props";
 import * as styles from "./buttonCustom.styles";
 
-export const ButtonCustom = ({ onPress, text, type, style, containerStyle }: IButtonCustom) => {
+export const ButtonCustom = ({ onPress, text, type, style, containerStyle, isLoading = false }: IButtonCustom) => {
 
   const container = useMemo(() => {
     let styles;
-    switch(type) {
+    switch (type) {
       case EButton.submit:
         styles = {
           backgroundColor: colors.blue,
@@ -43,13 +45,22 @@ export const ButtonCustom = ({ onPress, text, type, style, containerStyle }: IBu
       }}
       onPress={() => onPress?.()}
     >
-      <TextField
-        containerStyle={styles.textContainer}
-        style={style}
-        type={type === EButton.cancel ? ETextType.BLACK : ETextType.WHITE}
-        typo={ETextField.small}
-        text={text}
-      />
+      {
+        isLoading ? (
+          <Indicator
+            size={EIndicator.small}
+            color={colors.white}
+          />
+        ) : (
+          <TextField
+            containerStyle={styles.textContainer}
+            style={style}
+            type={type === EButton.cancel ? ETextType.BLACK : ETextType.WHITE}
+            typo={ETextField.small}
+            text={text}
+          />
+        )
+      }
     </TouchableOpacity>
   )
 }

@@ -88,7 +88,6 @@ const CustomDrawerContent = ({ navigation }: any) => {
         label={'Quản lí tài khoản'}
         onPress={() => {
           navigation.dispatch(DrawerActions.closeDrawer());
-          setUser("guest");
         }}
       />
       <DrawerItem

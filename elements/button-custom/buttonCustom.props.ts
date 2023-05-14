@@ -12,5 +12,6 @@ export interface IButtonCustom {
   onPress: () => void;
   text: string;
   containerStyle?: ViewStyle | ViewStyle[],
-  style?: ViewStyle | ViewStyle[]
+  style?: ViewStyle | ViewStyle[],
+  isLoading?: boolean
 }

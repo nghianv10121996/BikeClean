@@ -1,22 +1,33 @@
 import axios from 'axios';
+import { getToken } from './api/user';
+import { save, get } from "./LocalStorage/LocalStorage";
 
 const instance = axios.create({
-  baseURL: 'http://localhost:3000/',
+  baseURL: 'http://192.168.1.237:3000/',
   timeout: 3000,
 });
 
 class RequestAPI {
-  headers() {
-    let headers = {
-      "Content-Type": "application/json"
+  async headers(isAuthor?: boolean) {
+    let headers: Record<string, string> = {
+      "Content-Type": "application/json",
     }
+
+    if (isAuthor) {
+      const token = await get("token");
+      headers = {
+        ...headers,
+        "Authorization": `Bearer ${token}`
+      }
+    }
+
     return headers;
   }
 
-  async get(url: string) {
+  async get(url: string, isAuthor?: boolean) {
     try {
       const response = await instance.get(url, {
-        headers: this.headers()
+        headers: await this.headers(isAuthor)
       });
       return response;
     } catch (error: any) {
@@ -24,19 +35,21 @@ class RequestAPI {
     }
   }
 
-  async post(url: string, params: any) {
+  async post(url: string, params: any, isAuthor?: boolean) {
     try {
-      const response = await instance.post(url, params);
-      return response;
+      const { data } = await instance.post(url, params, {
+        headers: await this.headers(isAuthor)
+      });
+      return data;
     } catch (error: any) {
       throw new Error(error);
     }
   }
 
-  async put(url: string, params: any) {
+  async put(url: string, params: any, isAuthor?: boolean) {
     try {
-      const response = await instance.put(url, params, {
-        headers: this.headers()
+      const response = await instance.put(url, JSON.stringify(params), {
+        headers: await this.headers(isAuthor)
       });
       return response;
     } catch (error: any) {
@@ -44,10 +57,11 @@ class RequestAPI {
     }
   }
 
-  async delete(url: string) {
-    console.log(url)
+  async delete(url: string, isAuthor?: boolean) {
     try {
-      const response = await instance.delete(url);
+      const response = await instance.delete(url, {
+        headers: await this.headers(isAuthor)
+      });
       return response;
     } catch (error: any) {
       throw new Error(error)
