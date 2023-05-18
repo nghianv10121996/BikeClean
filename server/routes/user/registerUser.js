@@ -13,8 +13,10 @@ router.post('/', async function(req, res, next) {
   try {
     res.json(await regiterUserService(params));
   } catch (err) {
-    console.log(err)
-    next(err);
+    res.status(400).send({
+      status: 400,
+      message: "Đăng kí thất bại"
+    })
   }
 });
 

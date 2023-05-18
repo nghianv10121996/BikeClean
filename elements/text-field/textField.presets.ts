@@ -14,6 +14,11 @@ export const PRESETS: Record<ETextField, any> = {
     fontSize: 18,
     fontFamily: "OpenSans-Regular"
   } as TextStyle,
+  [ETextField.smaller]: {
+    ...BASE,
+    fontSize: 16,
+    fontFamily: "OpenSans-Regular"
+  } as TextStyle,
   [ETextField.medium]: {
     ...BASE,
     fontSize: 22,

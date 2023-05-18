@@ -4,7 +4,7 @@ import * as styles from "./inputField.styles"
 import { useMemo, useState } from "react"
 import { COLORS } from "../text-field/textField.presets"
 import { colors } from "../../utils/theme/colors"
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 import { TouchableOpacity } from "react-native"
 
 export const InputField = (props: IInputField) => {
@@ -17,20 +17,25 @@ export const InputField = (props: IInputField) => {
   }
 
   const iconName = useMemo(() => {
-    return isShowPassword ? "lock" : "unlock"
-  }, [isShowPassword])
+    return isShowPassword ? "eye" : "eye-slash"
+  }, [isShowPassword]);
+
+  const disabledStyle = useMemo(() => {
+    return props.isDisabled ? colors.grey : colors.white
+  }, [props.isDisabled])
 
   return (
-    <View style={{...styles.container, borderColor: color }}>
+    <View style={{...styles.container, borderColor: color, backgroundColor: disabledStyle}}>
       <TextInput
         {...props}
+        editable={!props.isDisabled}
         style={{...styles.input, color}}
-        secureTextEntry={isShowPassword}
+        secureTextEntry={!isShowPassword && props.isPasswordField}
       />
       {
         !!isPasswordField && (
           <TouchableOpacity onPress={onChangeRoles}>
-            <Icon name={iconName} size={25} color={colors.blue} />
+            <Icon name={iconName} size={20} color={colors.blue} />
           </TouchableOpacity>
         )
       }

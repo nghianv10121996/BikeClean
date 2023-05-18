@@ -30,7 +30,8 @@ class RequestAPI {
       });
       return response;
     } catch (error: any) {
-      throw new Error(error)
+      const errorMsg = error?.response.data.message;
+      throw new Error(errorMsg);
     }
   }
 
@@ -41,7 +42,8 @@ class RequestAPI {
       });
       return data;
     } catch (error: any) {
-      throw new Error(error);
+      const errorMsg = error?.response.data.message;
+      throw new Error(errorMsg);
     }
   }
 
@@ -52,7 +54,8 @@ class RequestAPI {
       });
       return response;
     } catch (error: any) {
-      throw new Error(error)
+      const errorMsg = error?.response.data.message;
+      throw new Error(errorMsg);
     }
   }
 
@@ -63,7 +66,8 @@ class RequestAPI {
       });
       return response;
     } catch (error: any) {
-      throw new Error(error)
+      const errorMsg = error?.response.data.message;
+      throw new Error(errorMsg);
     }
   }
 }

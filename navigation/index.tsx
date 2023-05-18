@@ -3,29 +3,29 @@
  * https://reactnavigation.org/docs/getting-started
  *
  */
-import { FontAwesome } from '@expo/vector-icons';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createDrawerNavigator, DrawerItem } from '@react-navigation/drawer';
+import { createDrawerNavigator, DrawerItem, DrawerContentScrollView } from '@react-navigation/drawer';
 import { DarkTheme, DefaultTheme, DrawerActions, NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { ColorSchemeName, StatusBar } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { ColorSchemeName, Image, StatusBar, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Icon from 'react-native-vector-icons/Ionicons';
-import Colors from '../constants/Colors';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import { navigationRef } from '../helper/navigation';
-import useColorScheme from '../hooks/useColorScheme';
 import Calendar from "../screens/main/calendar/calendar";
 import Home from "../screens/main/home/home";
 import Profile from "../screens/main/profile/profile";
 import Login from '../screens/user/login/login';
 import Register from "../screens/user/register/register";
-import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
+import { RootStackParamList } from '../types';
+import { CONSTANTS } from "../utils/constants/constants";
+import { save } from "../utils/LocalStorage/LocalStorage";
 import { UserContext } from '../utils/Provider/UserProvider';
 import { colors } from '../utils/theme/colors';
 import * as styles from "./index.styles";
 import LinkingConfiguration from './LinkingConfiguration';
+import TextField from '../elements/text-field/textField';
+import { ETextField, ETextType } from '../elements/text-field/textField.props';
+import Account from '../screens/main/drawer/account/Account';
 
 const Drawer = createDrawerNavigator();
 
@@ -70,17 +70,139 @@ const MainStack = () => {
   return (
     <Stack.Navigator
       initialRouteName="main"
-      screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="tab" component={BottomTabNavigator} />
+      screenOptions={{
+        headerShown: true
+      }}
+    >
+      <Stack.Screen
+        name="home"
+        component={Home}
+        options={{
+          headerTitle: "Trang chủ",
+          headerTitleAlign: "center",
+        }}
+      />
+      <Stack.Screen
+        name="calendar"
+        component={Calendar}
+        options={{
+          headerTitle: "Lịch",
+          headerTitleAlign: "center",
+        }}
+      />
+      <Stack.Screen
+        name="profile"
+        component={Profile}
+        options={{
+          headerTitle: "Quản lí tài khoản",
+          headerTitleAlign: "center",
+        }}
+      />
+      <Stack.Screen
+        name="account"
+        component={Account}
+        options={{
+          headerTitle: "Tài khoản",
+          headerTitleAlign: "center",
+        }}
+      />
     </Stack.Navigator>
   );
 }
 
 const CustomDrawerContent = ({ navigation }: any) => {
-  const [user, setUser] = React.useContext(UserContext);
+  const [focusField, setFocusField] = React.useState({
+    home: true,
+    calendar: false,
+    profile: false,
+  });
+
+
+  const handleFocusField = (fieldName: string) => {
+    const newData = Object.keys(focusField).reduce((allField: any, field) => {
+      return {
+        ...allField,
+        [field]: field === fieldName
+      }
+    }, {
+      home: false,
+      calendar: false,
+      profile: false,
+    });
+
+    setFocusField(newData);
+  }
+  const {user, setUser} = React.useContext(UserContext);
   return (
-    <>
+    <DrawerContentScrollView>
+      <View style={{
+        backgroundColor: colors.main,
+        height: 160,
+        marginBottom: 12,
+        justifyContent: "center",
+        alignItems: "center"
+      }}>
+        <View style={{
+          width: 100,
+          height: 100,
+          borderRadius: 50,
+          borderWidth: 2,
+          borderColor: colors.white,
+          overflow: "hidden"
+        }}>
+          <Image
+              source={{
+                uri: user.image,
+              }}
+              style={{
+                width: 100,
+                height: 100
+              }}
+              resizeMode="cover"
+          />
+        </View>
+        <TextField
+          containerStyle={{
+            marginTop: 12
+          }}
+          type={ETextType.BLUE}
+          typo={ETextField.smaller}
+          text={`Tài khoản: ${user.userName}`}
+        />
+      </View>
       <DrawerItem
+        icon={({ focused, color, size }) => {
+          return <Icon color={colors.blue} size={size} name={"home"} />
+        }}
+        focused={focusField.home}
+        pressColor={colors.grey}
+        labelStyle={{
+          color: colors.blue
+        }}
+        label={'Trang chủ'}
+        onPress={() => {
+          navigation.dispatch(DrawerActions.closeDrawer());
+          handleFocusField("home");
+          navigation.navigate("home");
+        }}
+      />
+      <DrawerItem
+        icon={({ focused, color, size }) => <Icon color={colors.blue} size={size} name={"calendar"} />}
+        focused={focusField.calendar}
+        pressColor={colors.grey}
+        labelStyle={{
+          color: colors.blue
+        }}
+        label={'Lịch'}
+        onPress={() => {
+          navigation.dispatch(DrawerActions.closeDrawer());
+          handleFocusField("calendar");
+          navigation.navigate("calendar")
+        }}
+      />
+      <DrawerItem
+        icon={({ focused, color, size }) => <Icon color={colors.blue} size={size} name={"user-circle"} />}
+        focused={focusField.profile}
         pressColor={colors.grey}
         labelStyle={{
           color: colors.blue
@@ -88,9 +210,12 @@ const CustomDrawerContent = ({ navigation }: any) => {
         label={'Quản lí tài khoản'}
         onPress={() => {
           navigation.dispatch(DrawerActions.closeDrawer());
+          handleFocusField("profile");
+          navigation.navigate("profile")
         }}
       />
       <DrawerItem
+        icon={({ focused, color, size }) => <Icon color={colors.blue} size={size} name={"sign-out"} />}
         pressColor={colors.grey}
         labelStyle={{
           color: colors.blue
@@ -98,28 +223,29 @@ const CustomDrawerContent = ({ navigation }: any) => {
         label={'Thoát'}
         onPress={() => {
           navigation.dispatch(DrawerActions.closeDrawer());
-          setUser("guest");
+          save(CONSTANTS.STORAGE.KEY.TOKEN, "");
+          setUser({});
         }}
       />
-    </>
+    </DrawerContentScrollView>
   )
 }
 
 function RootNavigator() {
-  const [user] = React.useContext(UserContext);
-
+  const { user } = React.useContext(UserContext);
+  console.log(user)
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar />
       {
-        user === "guest" ? (
+        !user.userID ? (
           <LoginStack />
         ) : (
           <Drawer.Navigator
             drawerContent={(props) => <CustomDrawerContent {...props} />}
           >
             <Drawer.Screen
-              name="Main"
+              name="main"
               options={{
                 drawerLabel: 'Home',
                 title: '',
@@ -139,81 +265,81 @@ function RootNavigator() {
  * A bottom tab navigator displays tab buttons on the bottom of the display to switch screens.
  * https://reactnavigation.org/docs/bottom-tab-navigator
  */
-const BottomTab = createBottomTabNavigator<RootTabParamList>();
+// const BottomTab = createBottomTabNavigator<RootTabParamList>();
 
-const HeaderLeft = ({ navigation }: any) => {
-  return (
-    <TouchableOpacity
-      onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
-      style={{
-        marginHorizontal: 8
-      }}
-    >
-      <Icon size={24} name="menu-outline" color={colors.blue} />
-    </TouchableOpacity>
-  )
-}
+// const HeaderLeft = ({ navigation }: any) => {
+//   return (
+//     <TouchableOpacity
+//       onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
+//       style={{
+//         marginHorizontal: 8
+//       }}
+//     >
+//       <Icon size={24} name="menu-outline" color={colors.blue} />
+//     </TouchableOpacity>
+//   )
+// }
 
-function BottomTabNavigator() {
-  const colorScheme = useColorScheme();
+// function BottomTabNavigator() {
+//   const colorScheme = useColorScheme();
 
-  return (
-    <BottomTab.Navigator
-      initialRouteName="Home"
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme].tint,
-      }}>
-      <BottomTab.Screen
-        name="Home"
-        component={Home}
-        options={(props: RootTabScreenProps<'Home'>) => ({
-          title: 'Trang chủ',
-          headerTitleAlign: "center",
-          headerTitleStyle: {color: colors.blue},
-          headerLeft: () => {
-            return <HeaderLeft {...props} />
-          },
-          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
-          headerRight: () => null,
-        })}
-      />
-      <BottomTab.Screen
-        name="Booking"
-        component={Calendar}
-        options={(props: RootTabScreenProps<'Booking'>) => ({
-          title: 'Đặt lịch',
-          headerTitleAlign: "center",
-          headerTitleStyle: {color: colors.blue},
-          headerLeft: () => {
-            return <HeaderLeft {...props} />
-          },
-          tabBarIcon: ({ color }) => <TabBarIcon name="calendar" color={color} />,
-        })}
-      />
-      <BottomTab.Screen
-        name="MyProfile"
-        component={Profile}
-        options={(props: RootTabScreenProps<'MyProfile'>) => ({
-          title: 'Thông tin tài khoản',
-          headerTitleAlign: "center",
-          headerTitleStyle: {color: colors.blue},
-          headerLeft: () => {
-            return <HeaderLeft {...props} />
-          },
-          tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
-        })}
-      />
-    </BottomTab.Navigator>
-  );
-}
+//   return (
+//     <BottomTab.Navigator
+//       initialRouteName="Home"
+//       screenOptions={{
+//         tabBarActiveTintColor: Colors[colorScheme].tint,
+//       }}>
+//       <BottomTab.Screen
+//         name="Home"
+//         component={Home}
+//         options={(props: RootTabScreenProps<'Home'>) => ({
+//           title: 'Trang chủ',
+//           headerTitleAlign: "center",
+//           headerTitleStyle: { color: colors.blue },
+//           headerLeft: () => {
+//             return <HeaderLeft {...props} />
+//           },
+//           tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
+//           headerRight: () => null,
+//         })}
+//       />
+//       <BottomTab.Screen
+//         name="Booking"
+//         component={Calendar}
+//         options={(props: RootTabScreenProps<'Booking'>) => ({
+//           title: 'Đặt lịch',
+//           headerTitleAlign: "center",
+//           headerTitleStyle: { color: colors.blue },
+//           headerLeft: () => {
+//             return <HeaderLeft {...props} />
+//           },
+//           tabBarIcon: ({ color }) => <TabBarIcon name="calendar" color={color} />,
+//         })}
+//       />
+//       <BottomTab.Screen
+//         name="MyProfile"
+//         component={Profile}
+//         options={(props: RootTabScreenProps<'MyProfile'>) => ({
+//           title: 'Thông tin tài khoản',
+//           headerTitleAlign: "center",
+//           headerTitleStyle: { color: colors.blue },
+//           headerLeft: () => {
+//             return <HeaderLeft {...props} />
+//           },
+//           tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
+//         })}
+//       />
+//     </BottomTab.Navigator>
+//   );
+// }
 
 
-/**
- * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
- */
-function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>['name'];
-  color: string;
-}) {
-  return <FontAwesome size={30} style={{ marginBottom: -3 }} {...props} />;
-}
+// /**
+//  * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
+//  */
+// function TabBarIcon(props: {
+//   name: React.ComponentProps<typeof FontAwesome>['name'];
+//   color: string;
+// }) {
+//   return <FontAwesome size={30} style={{ marginBottom: -3 }} {...props} />;
+// }

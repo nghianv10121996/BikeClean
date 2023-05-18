@@ -1,7 +1,6 @@
-import { Text } from "react-native";
 import { Calendar } from 'react-native-big-calendar';
 import { SafeAreaView } from "react-native-safe-area-context";
-import { colors } from "../../../utils/theme/colors";
+import * as styles from "./calendar.styles";
 
 const events = [
   {
@@ -13,15 +12,10 @@ const events = [
 
 const CalendarComponent = () => {
   return (
-    <SafeAreaView style={{
-      backgroundColor: colors.white,
-      flex: 1
-    }}>
+    <SafeAreaView style={styles.container}>
       <Calendar
-        bodyContainerStyle={{
-          backgroundColor: colors.white
-        }}
-        mode="month"
+        bodyContainerStyle={styles.calendarContainer}
+        mode="week"
         events={events}
         height={600}
       />

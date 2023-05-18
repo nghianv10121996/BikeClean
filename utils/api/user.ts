@@ -8,8 +8,8 @@ export const getUser = (userID: string) => {
   return Api.get(`user/${userID}`, true)
 }
 
-export const updateUser = (params: any) => {
-  return Api.put("user", params, true)
+export const updateUser = (userID: string, body: any) => {
+  return Api.put(`user/${userID}`, body, true)
 }
 
 export const deleteUser = (userID: any) => {

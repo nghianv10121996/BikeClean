@@ -11,7 +11,7 @@ const save = async (key: string, value: string) => {
 
 const get = async (key: string) => {
   try {
-    return await AsyncStorage.getItem(key)
+    return await AsyncStorage.getItem(key);
   } catch (e) {
     console.error("can't get local storage")
   }

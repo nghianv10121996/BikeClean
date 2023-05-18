@@ -1,8 +1,9 @@
 import { TextStyle, ViewStyle } from 'react-native';
 export enum ETextField {
   small = "small",
+  smaller = "smaller",
   medium = "medium",
-  large = "large"
+  large = "large",
 }
 
 export enum ETextType {
@@ -19,7 +20,7 @@ export interface ITextField {
   numberOfLines?: number;
   onPress?: () => void;
   style?: TextStyle[] | TextStyle;
-  text: string,
+  text: string | undefined | null,
   containerStyle?: ViewStyle | ViewStyle[],
   isHavePassword?: boolean
 }

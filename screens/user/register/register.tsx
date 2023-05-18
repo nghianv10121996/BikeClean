@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { View } from "react-native";
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -6,20 +7,20 @@ import { EButton } from "../../../elements/button-custom/buttonCustom.props";
 import InputField from "../../../elements/input-field/inputField";
 import TextField from "../../../elements/text-field/textField";
 import { ETextField, ETextType } from "../../../elements/text-field/textField.props";
+import ToastMarker from "../../../elements/toast-marker/ToastMaker";
+import { EToastMarker } from "../../../elements/toast-marker/ToastMaker.props";
 import { navigate } from "../../../helper/navigation";
 import { registerUser } from "../../../utils/api/user";
 import { CONSTANTS } from "../../../utils/constants/constants";
 import { colors } from "../../../utils/theme/colors";
 import * as styles from "../login/login.styles";
 import * as reStyles from "../register/register.styles";
-import ToastMarker from "../../../elements/toast-marker/ToastMaker";
-import { EToastMarker } from "../../../elements/toast-marker/ToastMaker.props";
-import { useState } from "react";
 
 const Register = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { control, handleSubmit, formState: { errors } } = useForm({
     defaultValues: {
+      userName: '',
       phoneNumber: '',
       password: ''
     }
@@ -36,7 +37,7 @@ const Register = () => {
     } catch (error: any) {
       ToastMarker({
         type: EToastMarker.success,
-        text: "Đăng kí thất bại"
+        text: error.message
       })
     } finally {
       setIsLoading(false)
@@ -47,6 +48,39 @@ const Register = () => {
     <View style={styles.container}>
       <Icon size={80} name="person-add-outline" color={colors.blue} />
       <View style={styles.inputBox}>
+        <View style={styles.inputContainer}>
+          <TextField
+            type={ETextType.BLUE}
+            typo={ETextField.small}
+            style={styles.input}
+            text={"Tên tài khoản: "}
+          />
+          <Controller
+            control={control}
+            rules={{
+              required: true,
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <InputField
+                type={ETextType.BLUE}
+                placeholder="Nhập tên tài khoản"
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+              />
+            )}
+            name="userName"
+          />
+          {errors.userName && (
+            <TextField
+              containerStyle={styles.errorContainer}
+              style={styles.errorStyle}
+              type={ETextType.ERROR}
+              typo={ETextField.small}
+              text={"Vui Lòng nhập SĐT cho đúng."}
+            />
+          )}
+        </View>
         <View style={styles.inputContainer}>
           <TextField
             type={ETextType.BLUE}

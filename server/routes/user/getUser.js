@@ -9,12 +9,15 @@ router.get('/user/:phoneNumber', async function(req, res, next) {
   jwt.verify(token.split(" ")[1], 'supersecret', async (err, decoded) => {
     if (err) return res.status(500).send({ message: 'Đăng nhập không thành công.' });
     try {
+      const user = await getUserService(req.params.phoneNumber);
       res.json({
-        message: "Đăng nhập thành công"
+        message: "Đăng nhập thành công",
+        user
       })
     } catch (err) {
-      // console.error(`Error: ${err}`);
-      next(err);
+      res.status(400).json({
+        message: "Đăng nhập thất bại"
+      })
     }
   });
 });

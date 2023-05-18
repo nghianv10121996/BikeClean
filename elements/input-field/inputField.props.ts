@@ -11,5 +11,6 @@ export interface IInputField {
   style?: TextStyle | TextStyle[];
   value: string;
   type: ETextType,
-  isPasswordField?: boolean
+  isPasswordField?: boolean,
+  isDisabled?: boolean
 }

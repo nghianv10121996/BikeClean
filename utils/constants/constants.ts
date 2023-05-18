@@ -10,5 +10,11 @@ export const CONSTANTS = {
       PROFILE: "main/profile",
       CREATEBOOKING: "main/createBooking"
     }
+  },
+  STORAGE: {
+    KEY: {
+      TOKEN: "token",
+      USER: "user"
+    }
   }
 }

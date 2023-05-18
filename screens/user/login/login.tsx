@@ -18,7 +18,7 @@ import { schema } from "./login.rules";
 import * as styles from "./login.styles";
 
 const Login = () => {
-  const [user, setUser] = useContext(UserContext);
+  const {user, setUser} = useContext(UserContext);
   const { control, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
@@ -31,18 +31,18 @@ const Login = () => {
     setIsLoading(true);
     try {
       const { token, user } = await getToken(form);
-      await save("token", token);
+      await save(CONSTANTS.STORAGE.KEY.TOKEN, token);
       await save("user", JSON.stringify(user));
       const { data: { message } } = await getUser(user.phoneNumber);
       toastMarker({
         type: EToastMarker.success,
         text: message
       });
-      setUser("user");
-    } catch (error) {
+      setUser(user);
+    } catch (error: any) {
       toastMarker({
         type: EToastMarker.error,
-        text: "Đăng nhập không thành công"
+        text: error?.message
       });
     } finally {
       setIsLoading(false);

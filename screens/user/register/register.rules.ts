@@ -3,6 +3,9 @@ import * as yup from "yup";
 export const schema = yup
   .object()
   .shape({
+    userName: yup.string()
+      .trim()
+      .required("Vui lòng nhập tên tài khoản"),
     phoneNumber: yup.string()
       .trim()
       .max(20, "SĐT không thể quá 12 kí tự")

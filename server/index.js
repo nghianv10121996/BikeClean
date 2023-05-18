@@ -10,10 +10,11 @@ const deleteUserRoutes = require("./routes/user/deleteUser");
 function errorHandler (err, req, res, next) {
   throw new Error(err)
 }
-app.use(express.json());
+app.use(express.json({limit: '50mb'}));
 app.use(
   express.urlencoded({
     extended: true,
+    limit: '50mb'
   })
 );
 app.get("/", (req, res) => {
@@ -23,8 +24,8 @@ app.get("/", (req, res) => {
 app.use("/user/register", registerUserRoutes);
 app.use("/user/authenticate", authenticateUser);
 app.get("/user/:userID", getUserRoutes);
-app.use("/user", updateUserRoutes);
-app.delete("/user/:userID", deleteUserRoutes);
+app.put("/user/:userID", updateUserRoutes);
+// app.delete("/user/:userID", deleteUserRoutes);
 app.use(errorHandler)
 
 app.listen(port, () => {
