@@ -7,7 +7,7 @@ import { DrawerContentScrollView, DrawerItem, createDrawerNavigator } from '@rea
 import { DarkTheme, DefaultTheme, DrawerActions, NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { ColorSchemeName, Image, StatusBar, View } from 'react-native';
+import { ColorSchemeName, Image, StatusBar, View, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import TextField from '../elements/text-field/textField';
 import { ETextField, ETextType } from '../elements/text-field/textField.props';
@@ -26,6 +26,7 @@ import { colors } from '../utils/theme/colors';
 import LinkingConfiguration from './LinkingConfiguration';
 import * as styles from "./index.styles";
 import Icon from 'react-native-vector-icons/Ionicons';
+import { ManagerMember } from '../screens/main/drawer/manager-member/ManagerMember';
 
 const Drawer = createDrawerNavigator();
 
@@ -66,7 +67,8 @@ const LoginStack = () => {
 }
 
 
-const MainStack = () => {
+const MainStack = ({ navigation }: any) => {
+  const { user } = React.useContext(UserContext);
   return (
     <Stack.Navigator
       initialRouteName="main"
@@ -78,6 +80,19 @@ const MainStack = () => {
         name="home"
         component={Home}
         options={{
+          headerLeft(props) {
+              return (
+                <TouchableOpacity onPress={() => {
+                  navigation.dispatch(DrawerActions.openDrawer())
+                }}>
+                  <Icon
+                    color={colors.blue}
+                    size={30}
+                    name={"menu"}
+                  />
+                </TouchableOpacity>
+              )
+          },
           headerTitle: "Trang chủ",
           headerTitleAlign: "center",
         }}
@@ -98,6 +113,18 @@ const MainStack = () => {
           headerTitleAlign: "center",
         }}
       />
+      {
+        user.roles === "admin" && (
+          <Stack.Screen
+            name="managerMember"
+            component={ManagerMember}
+            options={{
+              headerTitle: "Quản lí tài khoản",
+              headerTitleAlign: "center",
+            }}
+          />
+        )
+      }
       <Stack.Screen
         name="account"
         component={Account}
@@ -115,6 +142,7 @@ const CustomDrawerContent = ({ navigation }: any) => {
     home: true,
     calendar: false,
     profile: false,
+    managerMember: false
   });
 
 
@@ -128,6 +156,7 @@ const CustomDrawerContent = ({ navigation }: any) => {
       home: false,
       calendar: false,
       profile: false,
+      managerMember: false
     });
 
     setFocusField(newData);
@@ -135,13 +164,21 @@ const CustomDrawerContent = ({ navigation }: any) => {
   const { user, setUser } = React.useContext(UserContext);
   return (
     <DrawerContentScrollView>
-      <View style={{
-        backgroundColor: colors.main,
-        height: 160,
-        marginBottom: 12,
-        justifyContent: "center",
-        alignItems: "center"
-      }}>
+      <View style={styles.drawerContainer}>
+        <View style={styles.menuContainer}>
+          <TouchableOpacity
+            style={styles.iconMenu}
+            onPress={() => {
+              navigation.dispatch(DrawerActions.closeDrawer())
+            }}
+          >
+            <Icon
+              color={colors.blue}
+              size={30}
+              name={"close"}
+            />
+          </TouchableOpacity>
+        </View>
         {
           !!user?.image ? (
             <View style={styles.imageContainer}>
@@ -216,6 +253,20 @@ const CustomDrawerContent = ({ navigation }: any) => {
           navigation.dispatch(DrawerActions.closeDrawer());
           handleFocusField("profile");
           navigation.navigate("profile")
+        }}
+      />
+      <DrawerItem
+        icon={({ focused, color, size }) => <Icon color={colors.blue} size={size} name={"people-circle"} />}
+        focused={focusField.managerMember}
+        pressColor={colors.grey}
+        labelStyle={{
+          color: colors.blue
+        }}
+        label={'Quản lí nhân viên'}
+        onPress={() => {
+          navigation.dispatch(DrawerActions.closeDrawer());
+          handleFocusField("managerMember");
+          navigation.navigate("managerMember")
         }}
       />
       <DrawerItem

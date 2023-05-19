@@ -138,14 +138,18 @@ const ProfileView = (props: IProfile) => {
               text="Sửa"
             />
           </View>
-          <View style={styles.btnItem}>
-            <ButtonCustom
-              isLoading={isLoading}
-              type={EButton.delete}
-              onPress={onDeleteAccount}
-              text="Xóa"
-            />
-          </View>
+          {
+            props?.roles === "admin" && (
+              <View style={styles.btnItem}>
+                <ButtonCustom
+                  isLoading={isLoading}
+                  type={EButton.delete}
+                  onPress={onDeleteAccount}
+                  text="Xóa"
+                />
+              </View>
+            )
+          }
         </View>
     </>
   )

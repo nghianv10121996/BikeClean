@@ -40,7 +40,8 @@ export const backgroundImage: ViewStyle = {
 export const btnGroup: ViewStyle = {
   flexDirection: "row",
   marginHorizontal: -10,
-  marginTop: 40
+  marginTop: 40,
+  justifyContent: "center"
 }
 
 export const btnItem: ViewStyle = {

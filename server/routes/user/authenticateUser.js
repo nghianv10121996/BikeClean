@@ -6,8 +6,8 @@ const getUserService = require("../../service/user/getUserService");
 
 /* GET user. */
 router.post('/', async function (req, res, next) {
-  const user = await getUserService(req.body.phoneNumber);
   try {
+    const user = await getUserService(req.body.phoneNumber);
     const isCorrectPW = await bcrypt.compare(req.body.password, user?.password);
     if (!user || !isCorrectPW) {
       return res.status(400).json({
