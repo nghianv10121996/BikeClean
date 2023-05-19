@@ -1,8 +1,27 @@
 import { ImageStyle, TextStyle, ViewStyle } from 'react-native';
+import { colors } from '../../../../utils/theme/colors';
 export const container: ViewStyle = {
   flex: 1,
   alignItems: "center",
   marginBottom: 20
+}
+
+export const pictureContainer: ViewStyle = {
+  flexDirection: "row"
+}
+
+export const textPicture: ViewStyle = {
+  marginHorizontal: 4
+}
+
+export const imageContainer: ViewStyle = {
+  width: 120,
+  height: 120,
+  borderRadius: 60,
+  borderWidth: 2,
+  borderColor: colors.blue,
+  overflow: "hidden",
+  marginVertical: 12,
 }
 
 export const image: ImageStyle = {

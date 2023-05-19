@@ -3,29 +3,29 @@
  * https://reactnavigation.org/docs/getting-started
  *
  */
-import { createDrawerNavigator, DrawerItem, DrawerContentScrollView } from '@react-navigation/drawer';
+import { DrawerContentScrollView, DrawerItem, createDrawerNavigator } from '@react-navigation/drawer';
 import { DarkTheme, DefaultTheme, DrawerActions, NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { ColorSchemeName, Image, StatusBar, TouchableOpacity, View } from 'react-native';
+import { ColorSchemeName, Image, StatusBar, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import TextField from '../elements/text-field/textField';
+import { ETextField, ETextType } from '../elements/text-field/textField.props';
 import { navigationRef } from '../helper/navigation';
 import Calendar from "../screens/main/calendar/calendar";
+import Account from '../screens/main/drawer/account/Account';
 import Home from "../screens/main/home/home";
 import Profile from "../screens/main/profile/profile";
 import Login from '../screens/user/login/login';
 import Register from "../screens/user/register/register";
 import { RootStackParamList } from '../types';
-import { CONSTANTS } from "../utils/constants/constants";
 import { save } from "../utils/LocalStorage/LocalStorage";
 import { UserContext } from '../utils/Provider/UserProvider';
+import { CONSTANTS } from "../utils/constants/constants";
 import { colors } from '../utils/theme/colors';
-import * as styles from "./index.styles";
 import LinkingConfiguration from './LinkingConfiguration';
-import TextField from '../elements/text-field/textField';
-import { ETextField, ETextType } from '../elements/text-field/textField.props';
-import Account from '../screens/main/drawer/account/Account';
+import * as styles from "./index.styles";
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const Drawer = createDrawerNavigator();
 
@@ -132,7 +132,7 @@ const CustomDrawerContent = ({ navigation }: any) => {
 
     setFocusField(newData);
   }
-  const {user, setUser} = React.useContext(UserContext);
+  const { user, setUser } = React.useContext(UserContext);
   return (
     <DrawerContentScrollView>
       <View style={{
@@ -142,33 +142,37 @@ const CustomDrawerContent = ({ navigation }: any) => {
         justifyContent: "center",
         alignItems: "center"
       }}>
-        <View style={{
-          width: 100,
-          height: 100,
-          borderRadius: 50,
-          borderWidth: 2,
-          borderColor: colors.white,
-          overflow: "hidden"
-        }}>
-          <Image
-              source={{
-                uri: user.image,
+        {
+          !!user?.image ? (
+            <View style={styles.imageContainer}>
+              <Image
+                source={{
+                  uri: user.image,
+                }}
+                style={styles.image}
+                resizeMode="cover"
+              />
+            </View>
+          ) : (
+            <Icon
+              color={colors.white}
+              size={100}
+              name={"person-circle"}
+            />
+          )
+        }
+        {
+          !!user.userName && (
+            <TextField
+              containerStyle={{
+                marginTop: 12
               }}
-              style={{
-                width: 100,
-                height: 100
-              }}
-              resizeMode="cover"
-          />
-        </View>
-        <TextField
-          containerStyle={{
-            marginTop: 12
-          }}
-          type={ETextType.BLUE}
-          typo={ETextField.smaller}
-          text={`Tài khoản: ${user.userName}`}
-        />
+              type={ETextType.BLUE}
+              typo={ETextField.smaller}
+              text={user.userName}
+            />
+          )
+        }
       </View>
       <DrawerItem
         icon={({ focused, color, size }) => {
@@ -201,7 +205,7 @@ const CustomDrawerContent = ({ navigation }: any) => {
         }}
       />
       <DrawerItem
-        icon={({ focused, color, size }) => <Icon color={colors.blue} size={size} name={"user-circle"} />}
+        icon={({ focused, color, size }) => <Icon color={colors.blue} size={size} name={"person-circle"} />}
         focused={focusField.profile}
         pressColor={colors.grey}
         labelStyle={{
@@ -215,7 +219,7 @@ const CustomDrawerContent = ({ navigation }: any) => {
         }}
       />
       <DrawerItem
-        icon={({ focused, color, size }) => <Icon color={colors.blue} size={size} name={"sign-out"} />}
+        icon={({ focused, color, size }) => <Icon color={colors.blue} size={size} name={"exit"} />}
         pressColor={colors.grey}
         labelStyle={{
           color: colors.blue
@@ -233,7 +237,6 @@ const CustomDrawerContent = ({ navigation }: any) => {
 
 function RootNavigator() {
   const { user } = React.useContext(UserContext);
-  console.log(user)
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar />

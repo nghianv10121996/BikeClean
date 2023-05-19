@@ -2,8 +2,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as ImagePicker from 'expo-image-picker';
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Image, View } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
+import { Image, View, TouchableOpacity, ScrollView } from "react-native";
+import Icon from 'react-native-vector-icons/Ionicons';
 import ButtonCustom from "../../../../elements/button-custom/buttonCustom";
 import { EButton } from "../../../../elements/button-custom/buttonCustom.props";
 import InputField from "../../../../elements/input-field/inputField";
@@ -13,7 +13,7 @@ import ToastMarker from '../../../../elements/toast-marker/ToastMaker';
 import { EToastMarker } from '../../../../elements/toast-marker/ToastMaker.props';
 import { navigate } from "../../../../helper/navigation";
 import { updateUser } from "../../../../utils/api/user";
-import { colors } from "../../../../utils/theme/colors";
+import { colors } from '../../../../utils/theme/colors';
 import { schema } from './Account.rules';
 import * as styles from "./Account.styles";
 
@@ -44,17 +44,17 @@ const Account = (props: any) => {
     }
 
     try {
-      await updateUser(userID, body);
+      const response = await updateUser(userID, body);
       navigate("profile");
       ToastMarker({
         type: EToastMarker.success,
-        text: "success"
+        text: response?.message
       });
     } catch (error: any) {
       console.log(error)
       ToastMarker({
         type: EToastMarker.success,
-        text: "failed"
+        text: error.message
       })
     } finally {
       setIsLoading(false)
@@ -66,9 +66,7 @@ const Account = (props: any) => {
     if (!requestPermission.granted) {
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
         aspect: [4, 3],
-        quality: 1,
         base64: true,
       });
 
@@ -81,37 +79,38 @@ const Account = (props: any) => {
   return (
     <ScrollView>
       <View style={styles.container}>
-        <View style={{
-          width: 120,
-          height: 120,
-          borderRadius: 60,
-          borderWidth: 2,
-          borderColor: colors.blue,
-          overflow: "hidden",
-          marginVertical: 12
-        }}>
-          {
-            !!userImage && (
+        {
+          !!userImage ? (
+            <View style={styles.imageContainer}>
               <Image
                 source={{
                   uri: userImage,
                 }}
-                style={{
-                  width: 120,
-                  height: 120
-                }}
+                style={styles.image}
                 resizeMode="cover"
               />
-            )
-          }
 
-        </View>
-        <TextField
+            </View>
+          ) : (
+            <Icon
+              color={colors.main}
+              size={135}
+              name={"person-circle"}
+            />
+          )
+        }
+        <TouchableOpacity
+          style={styles.pictureContainer}
           onPress={onSelectImage}
-          type={ETextType.BLACK}
-          typo={ETextField.small}
-          text="Chọn ảnh mới"
-        />
+        >
+          <Icon color={colors.blue} size={26} name={"image"} />
+          <TextField
+            containerStyle={styles.textPicture}
+            type={ETextType.BLUE}
+            typo={ETextField.small}
+            text="Chọn ảnh mới"
+          />
+        </TouchableOpacity>
         <View style={styles.inputBox}>
           <View style={styles.inputContainer}>
             <TextField
@@ -294,7 +293,6 @@ const Account = (props: any) => {
             </View>
             <View style={styles.btnItem}>
               <ButtonCustom
-                // containerStyle={reStyles.cancelBtn}
                 type={EButton.delete}
                 onPress={() => {
                   navigate("profile")

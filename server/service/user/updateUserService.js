@@ -14,15 +14,7 @@ async function updateUserService(params, userID) {
         [userName, hashedPassword, numberOfBike, image]
     );
 
-    let message = 'Cập nhật tài khoản thất bại';
-
-    if (response.affectedRows) {
-        message = 'Chúc mừng đã đã cập nhật tài khoản thành công.';
-    }
-
-    return {
-        message
-    };
+    return response;
 
 }
 

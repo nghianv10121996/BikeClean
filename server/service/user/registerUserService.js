@@ -2,8 +2,8 @@ const db = require('../../connection/index');
 
 async function regiterUserService(params) {
     const response = await db.query(
-        "INSERT INTO `user`(`phoneNumber`,`password`) VALUES (?,?)",
-        [params.phoneNumber, params.password]
+        "INSERT INTO `user`(`userName`,`phoneNumber`,`password`) VALUES (?,?,?)",
+        [params.userName, params.phoneNumber, params.password]
     );
 
     let message = 'Vui lòng đăng kí lại';

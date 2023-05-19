@@ -9,8 +9,8 @@ router.put('/user/:userID', async function(req, res, next) {
   jwt.verify(token.split(" ")[1], 'supersecret', async (err, decoded) => {
     if (err) return res.status(500).send({ message: 'lỗi token.' });
     try {
-      const data = await updateUserService(req.body, req.params.userID);
-      console.log(data)
+      const response = await updateUserService(req.body, req.params.userID);
+      console.log(response, "response")
       res.status(200).json({
         message: "Cập nhật thành công"
       })

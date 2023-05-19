@@ -5,10 +5,16 @@ const deleteUserService = require("../../service/user/deleteUserService");
 /* GET user. */
 router.delete('/user/:userID', async function(req, res, next) {
   try {
-    res.json(await deleteUserService(req.params.userID));
+    const response = await deleteUserService(req.params.userID);
+    res.status(200).json({
+      status: 200,
+      message: "Xóa thành công"
+    })
   } catch (err) {
     console.error(`Error: ${err.message}`);
-    next(err);
+    res.status(400).json({
+      message: "Xóa thất bại"
+    })
   }
 });
 

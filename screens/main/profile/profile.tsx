@@ -1,16 +1,20 @@
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback, useContext, useState } from "react";
 import { Image, View } from "react-native";
+import Icon from 'react-native-vector-icons/Ionicons';
 import { WrapperComponent } from "../../../HOC/WrapperComponent/WrapperComponent";
 import ButtonCustom from "../../../elements/button-custom/buttonCustom";
 import { EButton } from "../../../elements/button-custom/buttonCustom.props";
 import TextField from "../../../elements/text-field/textField";
 import { ETextField, ETextType } from "../../../elements/text-field/textField.props";
+import ToastMarker from "../../../elements/toast-marker/ToastMaker";
+import { EToastMarker } from "../../../elements/toast-marker/ToastMaker.props";
 import { navigate } from "../../../helper/navigation";
 import { get } from "../../../utils/LocalStorage/LocalStorage";
 import { UserContext } from "../../../utils/Provider/UserProvider";
-import { getUser } from "../../../utils/api/user";
+import { deleteUser, getUser } from "../../../utils/api/user";
 import { CONSTANTS } from "../../../utils/constants/constants";
+import { colors } from "../../../utils/theme/colors";
 import { IProfile } from "./profile.props";
 import * as styles from "./profile.styles";
 
@@ -20,24 +24,55 @@ const ProfileView = (props: IProfile) => {
     numberOfBike,
     phoneNumber,
     rewardPoints,
-    userName
+    userName,
+    userID
   } = props;
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const emptyText = (text: string) => {
     return text || "(chưa cập nhật)"
+  };
+
+  const onDeleteAccount = async () => {
+    setIsLoading(true);
+    try {
+      const { data } = await deleteUser(userID);
+      ToastMarker({
+        type: EToastMarker.success,
+        text: data?.message
+      })
+    } catch (error) {
+      ToastMarker({
+        type: EToastMarker.error,
+        text: error?.message
+      })
+    } finally {
+      setIsLoading(false)
+    }
   }
   return (
     <>
       <View style={styles.imageContainer}>
-        <View style={styles.backgroundImage}>
-          <Image
-            source={{
-              uri: image,
-            }}
-            style={styles.imageStyle}
-            resizeMode="cover"
-          />
-        </View>
+        {
+          !!image ? (
+            <View style={styles.backgroundImage}>
+              <Image
+                source={{
+                  uri: image,
+                }}
+                style={styles.imageStyle}
+                resizeMode="cover"
+              />
+            </View>
+          ) : (
+            <Icon
+              color={colors.white}
+              size={135}
+              name={"person-circle"}
+            />
+          )
+        }
       </View>
       <View style={styles.userContainer}>
         <TextField
@@ -104,10 +139,9 @@ const ProfileView = (props: IProfile) => {
           </View>
           <View style={styles.btnItem}>
             <ButtonCustom
+              isLoading={isLoading}
               type={EButton.delete}
-              onPress={() => {
-
-              }}
+              onPress={onDeleteAccount}
               text="Xóa"
             />
           </View>
@@ -127,7 +161,7 @@ const Profile = () => {
         setIsLoading(true);
         try {
           const user: any = await get(CONSTANTS.STORAGE.KEY.USER);
-          const dataUser = JSON.parse(user)
+          const dataUser = JSON.parse(user);
           const { data } = await getUser(dataUser?.phoneNumber);
           setDataUser(data);
           setUser(data?.user);

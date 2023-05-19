@@ -25,7 +25,7 @@ app.use("/user/register", registerUserRoutes);
 app.use("/user/authenticate", authenticateUser);
 app.get("/user/:userID", getUserRoutes);
 app.put("/user/:userID", updateUserRoutes);
-// app.delete("/user/:userID", deleteUserRoutes);
+app.delete("/user/:userID", deleteUserRoutes);
 app.use(errorHandler)
 
 app.listen(port, () => {

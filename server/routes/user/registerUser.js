@@ -7,6 +7,7 @@ const bcrypt = require('bcryptjs');
 router.post('/', async function(req, res, next) {
   const hashedPassword = await bcrypt.hash(req.body.password, 8);
   const params = {
+    userName: req.body.userName,
     phoneNumber: req.body.phoneNumber,
     password: hashedPassword
   }
