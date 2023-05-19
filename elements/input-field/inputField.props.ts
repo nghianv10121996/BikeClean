@@ -12,5 +12,6 @@ export interface IInputField {
   value: string;
   type: ETextType,
   isPasswordField?: boolean,
-  isDisabled?: boolean
+  isDisabled?: boolean,
+  isRequired?: boolean
 }

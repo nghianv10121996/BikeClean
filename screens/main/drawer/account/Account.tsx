@@ -44,11 +44,11 @@ const Account = (props: any) => {
     }
 
     try {
-      const response = await updateUser(userID, body);
+      const { data } = await updateUser(userID, body);
       navigate("profile");
       ToastMarker({
         type: EToastMarker.success,
-        text: response?.message
+        text: data?.message
       });
     } catch (error: any) {
       console.log(error)

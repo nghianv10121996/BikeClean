@@ -15,21 +15,32 @@ import { CONSTANTS } from "../../../utils/constants/constants";
 import { colors } from "../../../utils/theme/colors";
 import * as styles from "../login/login.styles";
 import * as reStyles from "../register/register.styles";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { schema } from "./register.rules";
 
 const Register = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { control, handleSubmit, formState: { errors } } = useForm({
+    resolver: yupResolver(schema),
     defaultValues: {
       userName: '',
       phoneNumber: '',
-      password: ''
+      newPassword: '',
+      confirmPassword: ''
     }
   });
 
   const onSubmit = async (form: any) => {
-    setIsLoading(true)
+    setIsLoading(true);
+    let body = {
+      userName: form?.userName,
+      phoneNumber: form?.phoneNumber,
+      password: form?.newPassword
+    }
+
     try {
-      const { message } = await registerUser(form);
+      const { message } = await registerUser(body);
+      navigate("login");
       ToastMarker({
         type: EToastMarker.success,
         text: message
@@ -77,7 +88,7 @@ const Register = () => {
               style={styles.errorStyle}
               type={ETextType.ERROR}
               typo={ETextField.small}
-              text={"Vui Lòng nhập SĐT cho đúng."}
+              text={errors.userName?.message}
             />
           )}
         </View>
@@ -110,7 +121,7 @@ const Register = () => {
               style={styles.errorStyle}
               type={ETextType.ERROR}
               typo={ETextField.small}
-              text={"Vui Lòng nhập SĐT cho đúng."}
+              text={errors.phoneNumber?.message}
             />
           )}
         </View>
@@ -136,16 +147,52 @@ const Register = () => {
                 isPasswordField={true}
               />
             )}
-            name="password"
+            name="newPassword"
           />
           {
-            errors.password && (
+            errors.newPassword && (
               <TextField
                 containerStyle={styles.errorContainer}
                 style={styles.errorStyle}
                 type={ETextType.ERROR}
                 typo={ETextField.small}
-                text={"Vui Lòng nhập mật khẩu cho đúng."}
+                text={errors.newPassword?.message}
+              />
+            )
+          }
+        </View>
+        <View style={styles.inputContainer}>
+          <TextField
+            type={ETextType.BLUE}
+            typo={ETextField.small}
+            style={styles.input}
+            text={"Xác nhận mật khẩu:"}
+          />
+          <Controller
+            control={control}
+            rules={{
+              required: true,
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <InputField
+                type={ETextType.BLUE}
+                placeholder="Vui lòng nhập mật khẩu."
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+                isPasswordField={true}
+              />
+            )}
+            name="confirmPassword"
+          />
+          {
+            errors.confirmPassword && (
+              <TextField
+                containerStyle={styles.errorContainer}
+                style={styles.errorStyle}
+                type={ETextType.ERROR}
+                typo={ETextField.small}
+                text={errors.confirmPassword?.message}
               />
             )
           }

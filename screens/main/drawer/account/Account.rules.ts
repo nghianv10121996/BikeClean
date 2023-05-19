@@ -5,17 +5,17 @@ export const schema = yup
   .shape({
     userName: yup.string()
       .trim()
-      .required("Vui lòng nhập tài khoản"),
+      .required("Vui lòng nhập tài khoản."),
     phoneNumber: yup.string()
       .trim()
-      .required("Vui lòng nhập số điện thoại"),
+      .required("Vui lòng nhập số điện thoại."),
     newPassword: yup.string()
       .trim()
-      .required("Vui lòng nhập mật khẩu mới"),
+      .required("Vui lòng nhập mật khẩu mới."),
     confirmPassword: yup.string()
       .trim()
       .required('Vui lòng nhập mật khẩu.')
-      .oneOf([yup.ref('newPassword'), ""], 'Mật khẩu không khớp'),
+      .oneOf([yup.ref('newPassword'), ""], 'Mật khẩu không khớp.'),
     numberOfBike: yup.string()
       .trim()
       .notRequired(),

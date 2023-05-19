@@ -41,7 +41,8 @@ const ProfileView = (props: IProfile) => {
       ToastMarker({
         type: EToastMarker.success,
         text: data?.message
-      })
+      });
+      navigate("login");
     } catch (error) {
       ToastMarker({
         type: EToastMarker.error,
