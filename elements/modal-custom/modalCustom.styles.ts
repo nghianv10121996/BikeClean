@@ -16,7 +16,7 @@ export const contentBox: ViewStyle = {
   backgroundColor: "#fff",
   borderRadius: 20,
   padding: 16,
-  width: "80%",
+  width: "90%",
   alignItems: 'center',
   shadowColor: '#000',
   shadowOffset: {

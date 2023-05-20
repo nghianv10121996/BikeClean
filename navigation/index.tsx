@@ -4,7 +4,7 @@
  *
  */
 import { DrawerContentScrollView, DrawerItem, createDrawerNavigator } from '@react-navigation/drawer';
-import { DarkTheme, DefaultTheme, DrawerActions, NavigationContainer } from '@react-navigation/native';
+import { DarkTheme, DefaultTheme, DrawerActions, NavigationContainer, useNavigationState } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { ColorSchemeName, Image, StatusBar, View, TouchableOpacity } from 'react-native';
@@ -27,16 +27,23 @@ import LinkingConfiguration from './LinkingConfiguration';
 import * as styles from "./index.styles";
 import Icon from 'react-native-vector-icons/Ionicons';
 import { ManagerMember } from '../screens/main/drawer/manager-member/ManagerMember';
-
 const Drawer = createDrawerNavigator();
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
+  const [routesName, setRoutesName] = React.useState<string>("")
   return (
     <NavigationContainer
       ref={navigationRef}
       linking={LinkingConfiguration}
-      theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <RootNavigator />
+      theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
+      onStateChange={(state) => {
+        const routes = state?.routes[0]?.state?.routes;
+        const length = routes?.length || 0;
+        const name= routes[length - 1].name;
+        setRoutesName(name)
+      }}
+    >
+      <RootNavigator routesName={routesName}/>
     </NavigationContainer>
   );
 }
@@ -137,7 +144,7 @@ const MainStack = ({ navigation }: any) => {
   );
 }
 
-const CustomDrawerContent = ({ navigation }: any) => {
+const CustomDrawerContent = ({ navigation, routesName }: any) => {
   const [focusField, setFocusField] = React.useState({
     home: true,
     calendar: false,
@@ -145,6 +152,9 @@ const CustomDrawerContent = ({ navigation }: any) => {
     managerMember: false
   });
 
+  React.useEffect(() => {
+    handleFocusField(routesName)
+  }, [routesName])
 
   const handleFocusField = (fieldName: string) => {
     const newData = Object.keys(focusField).reduce((allField: any, field) => {
@@ -223,7 +233,6 @@ const CustomDrawerContent = ({ navigation }: any) => {
         label={'Trang chủ'}
         onPress={() => {
           navigation.dispatch(DrawerActions.closeDrawer());
-          handleFocusField("home");
           navigation.navigate("home");
         }}
       />
@@ -237,7 +246,6 @@ const CustomDrawerContent = ({ navigation }: any) => {
         label={'Lịch'}
         onPress={() => {
           navigation.dispatch(DrawerActions.closeDrawer());
-          handleFocusField("calendar");
           navigation.navigate("calendar")
         }}
       />
@@ -251,24 +259,26 @@ const CustomDrawerContent = ({ navigation }: any) => {
         label={'Quản lí tài khoản'}
         onPress={() => {
           navigation.dispatch(DrawerActions.closeDrawer());
-          handleFocusField("profile");
           navigation.navigate("profile")
         }}
       />
-      <DrawerItem
-        icon={({ focused, color, size }) => <Icon color={colors.blue} size={size} name={"people-circle"} />}
-        focused={focusField.managerMember}
-        pressColor={colors.grey}
-        labelStyle={{
-          color: colors.blue
-        }}
-        label={'Quản lí nhân viên'}
-        onPress={() => {
-          navigation.dispatch(DrawerActions.closeDrawer());
-          handleFocusField("managerMember");
-          navigation.navigate("managerMember")
-        }}
-      />
+      {
+        user.roles === "admin" && (
+          <DrawerItem
+            icon={({ focused, color, size }) => <Icon color={colors.blue} size={size} name={"people-circle"} />}
+            focused={focusField.managerMember}
+            pressColor={colors.grey}
+            labelStyle={{
+              color: colors.blue
+            }}
+            label={'Quản lí nhân viên'}
+            onPress={() => {
+              navigation.dispatch(DrawerActions.closeDrawer());
+              navigation.navigate("managerMember")
+            }}
+          />
+        )
+      }
       <DrawerItem
         icon={({ focused, color, size }) => <Icon color={colors.blue} size={size} name={"exit"} />}
         pressColor={colors.grey}
@@ -286,7 +296,7 @@ const CustomDrawerContent = ({ navigation }: any) => {
   )
 }
 
-function RootNavigator() {
+function RootNavigator({ routesName }: { routesName: string }) {
   const { user } = React.useContext(UserContext);
   return (
     <SafeAreaView style={styles.container}>
@@ -296,7 +306,7 @@ function RootNavigator() {
           <LoginStack />
         ) : (
           <Drawer.Navigator
-            drawerContent={(props) => <CustomDrawerContent {...props} />}
+            drawerContent={(props) => <CustomDrawerContent routesName={routesName} {...props} />}
           >
             <Drawer.Screen
               name="main"

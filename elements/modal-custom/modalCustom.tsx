@@ -2,7 +2,7 @@ import { Modal, Text, View } from "react-native";
 import { IModalCustom } from "./modalCustom.props";
 import * as styles from "./modalCustom.styles";
 
-export const ModalCustom = ({ isVisible, onClose }: IModalCustom) => {
+export const ModalCustom = ({ isVisible, onClose, children }: IModalCustom) => {
   return (
     <Modal
       animationType="slide"
@@ -12,7 +12,7 @@ export const ModalCustom = ({ isVisible, onClose }: IModalCustom) => {
     >
       <View style={styles.content}>
         <View style={styles.contentBox}>
-        <Text>123</Text>
+          {children}
         </View>
       </View>
     </Modal>
