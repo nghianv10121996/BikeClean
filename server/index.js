@@ -10,6 +10,10 @@ const updateUserRoutes = require("./routes/user/updateUser");
 const deleteUserRoutes = require("./routes/user/deleteUser");
 // member
 const getMemberRoutes = require("./routes/member/getMember");
+// booking
+const createBookingRoutes = require("./routes/booking/createBooking");
+const getBookingRoutes = require("./routes/booking/getBooking");
+const getAllBookingRoutes = require("./routes/booking/getAllBooking");
 function errorHandler (err, req, res, next) {
   throw new Error(err)
 }
@@ -31,6 +35,10 @@ app.put("/user/:userID", updateUserRoutes);
 app.delete("/user/:userID", deleteUserRoutes);
 // member
 app.get("/member", getMemberRoutes);
+// booking
+app.post("/booking/:userID", createBookingRoutes);
+app.get("/booking", getBookingRoutes);
+app.get("/bookings", getAllBookingRoutes);
 app.use(errorHandler)
 
 app.listen(port, () => {

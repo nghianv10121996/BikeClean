@@ -5,7 +5,7 @@ export const registerUser = (params: any) => {
 }
 
 export const getUser = (userID: string) => {
-  return Api.get(`user/${userID}`, true)
+  return Api.get(`user/${userID}`, null, true)
 }
 
 export const updateUser = (userID: string, body: any) => {

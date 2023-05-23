@@ -121,7 +121,7 @@ const MainStack = ({ navigation }: any) => {
         }}
       />
       {
-        user.roles === "admin" && (
+        user?.roles === "admin" && (
           <Stack.Screen
             name="managerMember"
             component={ManagerMember}
@@ -263,7 +263,7 @@ const CustomDrawerContent = ({ navigation, routesName }: any) => {
         }}
       />
       {
-        user.roles === "admin" && (
+        user?.roles === "admin" && (
           <DrawerItem
             icon={({ focused, color, size }) => <Icon color={colors.blue} size={size} name={"people-circle"} />}
             focused={focusField.managerMember}
@@ -302,7 +302,7 @@ function RootNavigator({ routesName }: { routesName: string }) {
     <SafeAreaView style={styles.container}>
       <StatusBar />
       {
-        !user.userID ? (
+        !user?.userID ? (
           <LoginStack />
         ) : (
           <Drawer.Navigator

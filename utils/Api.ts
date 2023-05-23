@@ -1,12 +1,19 @@
 import axios from 'axios';
 import { get } from "./LocalStorage/LocalStorage";
+import { convertObjectToParams } from './helper';
 
+const BASE_URL = "http://192.168.1.237:3000/";
 const instance = axios.create({
-  baseURL: 'http://192.168.1.237:3000/',
   timeout: 3000,
 });
 
 class RequestAPI {
+  baseUrl = null;
+
+  constructor(baseUrl: any = BASE_URL) {
+    this.baseUrl = baseUrl;
+  }
+
   async headers(isAuthor?: boolean) {
     let headers: Record<string, string> = {
       "Content-Type": "application/json",
@@ -23,7 +30,18 @@ class RequestAPI {
     return headers;
   }
 
-  async get(url: string, isAuthor?: boolean) {
+  getUrl(path: string, params?: any) {
+    let url = this.baseUrl + path;
+
+    if (params) {
+      url += `?${convertObjectToParams(params)}`;
+    }
+
+    return url;
+  }
+
+  async get(path: string, params: any, isAuthor?: boolean) {
+    const url = this.getUrl(path, params);
     try {
       const response = await instance.get(url, {
         headers: await this.headers(isAuthor)
@@ -35,7 +53,8 @@ class RequestAPI {
     }
   }
 
-  async post(url: string, params: any, isAuthor?: boolean) {
+  async post(path: string, params: any, isAuthor?: boolean) {
+    const url = this.getUrl(path);
     try {
       const { data } = await instance.post(url, params, {
         headers: await this.headers(isAuthor)
@@ -47,7 +66,8 @@ class RequestAPI {
     }
   }
 
-  async put(url: string, params: any, isAuthor?: boolean) {
+  async put(path: string, params: any, isAuthor?: boolean) {
+    const url = this.getUrl(path);
     try {
       const response = await instance.put(url, JSON.stringify(params), {
         headers: await this.headers(isAuthor)
@@ -59,7 +79,8 @@ class RequestAPI {
     }
   }
 
-  async delete(url: string, isAuthor?: boolean) {
+  async delete(path: string, isAuthor?: boolean) {
+    const url = this.getUrl(path);
     try {
       const response = await instance.delete(url, {
         headers: await this.headers(isAuthor)
