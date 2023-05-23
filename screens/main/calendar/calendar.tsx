@@ -39,6 +39,7 @@ const CalendarView = (props: any) => {
 
   return (
     <SafeAreaView style={styles.container}>
+      {/* modal create */}
       <ModalCustom
         isVisible={isModalCreate}
         onClose={() => {
@@ -163,7 +164,7 @@ const CalendarView = (props: any) => {
           </View>
         </View>
       </ModalCustom>
-
+      {/* Calendar */}
       <Calendar
         date={date}
         bodyContainerStyle={styles.calendarContainer}
