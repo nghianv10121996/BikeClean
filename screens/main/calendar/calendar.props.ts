@@ -1,5 +1,6 @@
 export enum EStatus {
     created = "created",
     processing = "processing",
-    complete = "complete"
+    completed = "completed",
+    cancel = "cancel",
 }

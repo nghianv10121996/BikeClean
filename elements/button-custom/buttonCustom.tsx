@@ -8,7 +8,15 @@ import { ETextField, ETextType } from "../text-field/textField.props";
 import { EButton, IButtonCustom } from "./buttonCustom.props";
 import * as styles from "./buttonCustom.styles";
 
-export const ButtonCustom = ({ onPress, text, type, style, containerStyle, isLoading = false }: IButtonCustom) => {
+export const ButtonCustom = ({
+  onPress,
+  text,
+  type,
+  style,
+  containerStyle,
+  isLoading = false,
+  isDisabled
+}: IButtonCustom) => {
 
   const container = useMemo(() => {
     let styles;
@@ -37,12 +45,13 @@ export const ButtonCustom = ({ onPress, text, type, style, containerStyle, isLoa
 
   return (
     <TouchableOpacity
-      activeOpacity={1}
       style={{
         ...styles.container,
         ...container,
-        ...containerStyle
+        ...containerStyle,
+        opacity: isDisabled ? 0.8 : 1
       }}
+      disabled={isDisabled}
       onPress={() => onPress?.()}
     >
       {

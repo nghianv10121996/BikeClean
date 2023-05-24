@@ -79,8 +79,8 @@ class RequestAPI {
     }
   }
 
-  async delete(path: string, isAuthor?: boolean) {
-    const url = this.getUrl(path);
+  async delete(path: string, params: any, isAuthor?: boolean) {
+    const url = this.getUrl(path, params);
     try {
       const response = await instance.delete(url, {
         headers: await this.headers(isAuthor)

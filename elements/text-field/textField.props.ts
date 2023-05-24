@@ -10,7 +10,7 @@ export enum ETextType {
   WHITE = "white",
   BLACK = "black",
   YELLOW = "yellow",
-  BLUE = "blue",
+BLUE = "blue",
   ERROR = "error"
 }
 
@@ -22,5 +22,5 @@ export interface ITextField {
   style?: TextStyle[] | TextStyle;
   text: string | undefined | null,
   containerStyle?: ViewStyle | ViewStyle[],
-  isHavePassword?: boolean
+  isHavePassword?: boolean;
 }

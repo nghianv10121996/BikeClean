@@ -13,7 +13,7 @@ export const updateUser = (userID: string, body: any) => {
 }
 
 export const deleteUser = (userID: any) => {
-  return Api.delete(`user/${userID}`, true)
+  return Api.delete(`user/${userID}`, null, true)
 }
 
 export const getToken = (params: any) => {

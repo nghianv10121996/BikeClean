@@ -131,17 +131,18 @@ const Account = (props: any) => {
                   onBlur={onBlur}
                   onChangeText={onChange}
                   value={value}
+                  isError={!!errors.userName?.message}
                 />
               )}
               name="userName"
             />
-            {errors.userName && (
+            {errors?.userName && (
               <TextField
                 containerStyle={styles.errorContainer}
                 style={styles.errorStyle}
                 type={ETextType.ERROR}
                 typo={ETextField.small}
-                text={errors.userName?.message}
+                text={errors?.userName?.message}
               />
             )}
           </View>
@@ -169,15 +170,6 @@ const Account = (props: any) => {
               )}
               name="phoneNumber"
             />
-            {errors.phoneNumber && (
-              <TextField
-                containerStyle={styles.errorContainer}
-                style={styles.errorStyle}
-                type={ETextType.ERROR}
-                typo={ETextField.small}
-                text={errors.phoneNumber?.message}
-              />
-            )}
           </View>
           <View style={styles.inputContainer}>
             <TextField
@@ -202,15 +194,6 @@ const Account = (props: any) => {
               )}
               name="numberOfBike"
             />
-            {errors.numberOfBike && (
-              <TextField
-                containerStyle={styles.errorContainer}
-                style={styles.errorStyle}
-                type={ETextType.ERROR}
-                typo={ETextField.small}
-                text={errors.numberOfBike?.message}
-              />
-            )}
           </View>
           <View style={styles.inputContainer}>
             <TextField
@@ -232,6 +215,7 @@ const Account = (props: any) => {
                   onChangeText={onChange}
                   value={value}
                   isPasswordField={true}
+                  isError={!!errors.newPassword?.message}
                 />
               )}
               name="newPassword"
@@ -266,6 +250,7 @@ const Account = (props: any) => {
                   onChangeText={onChange}
                   value={value}
                   isPasswordField={true}
+                  isError={!!errors.confirmPassword?.message}
                 />
               )}
               name="confirmPassword"

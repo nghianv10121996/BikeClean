@@ -13,5 +13,6 @@ export interface IButtonCustom {
   text: string;
   containerStyle?: ViewStyle | ViewStyle[],
   style?: ViewStyle | ViewStyle[],
-  isLoading?: boolean
+  isLoading?: boolean,
+  isDisabled?: boolean
 }

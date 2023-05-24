@@ -27,6 +27,7 @@ import LinkingConfiguration from './LinkingConfiguration';
 import * as styles from "./index.styles";
 import Icon from 'react-native-vector-icons/Ionicons';
 import { ManagerMember } from '../screens/main/drawer/manager-member/ManagerMember';
+import { Booking } from '../screens/main/drawer/booking/Booking';
 const Drawer = createDrawerNavigator();
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
@@ -37,10 +38,10 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
       linking={LinkingConfiguration}
       theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
       onStateChange={(state) => {
-        const routes = state?.routes[0]?.state?.routes;
-        const length = routes?.length || 0;
-        const name= routes[length - 1].name;
-        setRoutesName(name)
+        // const routes = state?.routes[0]?.state?.routes;
+        // const length = routes?.length || 0;
+        // const name= routes[length - 1]?.name;
+        // setRoutesName(name)
       }}
     >
       <RootNavigator routesName={routesName}/>
@@ -122,14 +123,24 @@ const MainStack = ({ navigation }: any) => {
       />
       {
         user?.roles === "admin" && (
-          <Stack.Screen
-            name="managerMember"
-            component={ManagerMember}
-            options={{
-              headerTitle: "Quản lí tài khoản",
-              headerTitleAlign: "center",
-            }}
-          />
+          <>
+            <Stack.Screen
+              name="managerMember"
+              component={ManagerMember}
+              options={{
+                headerTitle: "Quản lí tài khoản",
+                headerTitleAlign: "center",
+              }}
+            />
+            <Stack.Screen
+              name="booking"
+              component={Booking}
+              options={{
+                headerTitle: "Quản lí Lịch",
+                headerTitleAlign: "center",
+              }}
+            />
+          </>
         )
       }
       <Stack.Screen

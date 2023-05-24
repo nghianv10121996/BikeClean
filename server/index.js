@@ -14,6 +14,8 @@ const getMemberRoutes = require("./routes/member/getMember");
 const createBookingRoutes = require("./routes/booking/createBooking");
 const getBookingRoutes = require("./routes/booking/getBooking");
 const getAllBookingRoutes = require("./routes/booking/getAllBooking");
+const deleteBookingRoutes = require("./routes/booking/deleteBooking");
+const changeStatusBookingRoutes = require("./routes/booking/changeStatusBooking");
 function errorHandler (err, req, res, next) {
   throw new Error(err)
 }
@@ -39,6 +41,8 @@ app.get("/member", getMemberRoutes);
 app.post("/booking/:userID", createBookingRoutes);
 app.get("/booking", getBookingRoutes);
 app.get("/bookings", getAllBookingRoutes);
+app.delete("/booking", deleteBookingRoutes);
+app.put("/booking/:bookingID", changeStatusBookingRoutes);
 app.use(errorHandler)
 
 app.listen(port, () => {

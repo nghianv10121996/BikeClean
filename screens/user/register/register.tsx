@@ -1,3 +1,4 @@
+import { yupResolver } from "@hookform/resolvers/yup";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { View } from "react-native";
@@ -15,7 +16,6 @@ import { CONSTANTS } from "../../../utils/constants/constants";
 import { colors } from "../../../utils/theme/colors";
 import * as styles from "../login/login.styles";
 import * as reStyles from "../register/register.styles";
-import { yupResolver } from "@hookform/resolvers/yup";
 import { schema } from "./register.rules";
 
 const Register = () => {
@@ -78,17 +78,18 @@ const Register = () => {
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
+                isError={!!errors.userName?.message}
               />
             )}
             name="userName"
           />
-          {errors.userName && (
+          {errors?.userName && (
             <TextField
               containerStyle={styles.errorContainer}
               style={styles.errorStyle}
               type={ETextType.ERROR}
               typo={ETextField.small}
-              text={errors.userName?.message}
+              text={errors?.userName?.message}
             />
           )}
         </View>
@@ -111,6 +112,7 @@ const Register = () => {
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
+                isError={!!errors.phoneNumber?.message}
               />
             )}
             name="phoneNumber"
@@ -121,7 +123,7 @@ const Register = () => {
               style={styles.errorStyle}
               type={ETextType.ERROR}
               typo={ETextField.small}
-              text={errors.phoneNumber?.message}
+              text={errors?.phoneNumber?.message}
             />
           )}
         </View>
@@ -145,12 +147,13 @@ const Register = () => {
                 onChangeText={onChange}
                 value={value}
                 isPasswordField={true}
+                isError={!!errors.newPassword?.message}
               />
             )}
             name="newPassword"
           />
           {
-            errors.newPassword && (
+            errors?.newPassword && (
               <TextField
                 containerStyle={styles.errorContainer}
                 style={styles.errorStyle}
@@ -181,12 +184,13 @@ const Register = () => {
                 onChangeText={onChange}
                 value={value}
                 isPasswordField={true}
+                isError={!!errors.confirmPassword?.message}
               />
             )}
             name="confirmPassword"
           />
           {
-            errors.confirmPassword && (
+            errors?.confirmPassword && (
               <TextField
                 containerStyle={styles.errorContainer}
                 style={styles.errorStyle}

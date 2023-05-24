@@ -15,7 +15,9 @@ export const cardContainer: ViewStyle = {
   borderWidth: 1,
   borderColor: colors.blue,
   backgroundColor: colors.white,
-  marginVertical: 6
+  marginVertical: 6,
+  justifyContent: "space-between",
+  alignItems: "center"
 }
 
 export const image: ImageStyle = {
@@ -24,9 +26,20 @@ export const image: ImageStyle = {
 }
 
 export const textContainer: ViewStyle = {
-  marginLeft: 10
+  width: "55%"
 }
 
 export const textBox: ViewStyle = {
   flexDirection: "row"
+}
+
+export const btnGroup: ViewStyle = {
+  flexDirection: "row",
+  marginHorizontal: -8,
+  flexWrap: "wrap"
+}
+
+export const btnItem: ViewStyle = {
+  width: "50%",
+  padding: 8
 }

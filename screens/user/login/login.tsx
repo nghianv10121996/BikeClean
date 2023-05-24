@@ -18,7 +18,7 @@ import { schema } from "./login.rules";
 import * as styles from "./login.styles";
 
 const Login = () => {
-  const {user, setUser} = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
   const { control, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
@@ -76,6 +76,7 @@ const Login = () => {
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
+                isError={!!errors.phoneNumber?.message}
               />
             )}
             name="phoneNumber"
@@ -110,6 +111,7 @@ const Login = () => {
                 onChangeText={onChange}
                 value={value}
                 isPasswordField={true}
+                isError={!!errors.password?.message}
               />
             )}
             name="password"

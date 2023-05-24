@@ -16,3 +16,7 @@ export const formatDate = (date: Date | Moment) => {
 export const formatTime = (date: Date | Moment) => {
   return moment(date).format("HH:mm")
 }
+
+export const formatDateTime = (date: Date | Moment) => {
+  return moment(date).format("DD-MM-YYYY HH:mm")
+}

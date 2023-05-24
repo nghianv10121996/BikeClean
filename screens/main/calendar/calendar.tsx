@@ -13,19 +13,23 @@ import { ETextField, ETextType } from '../../../elements/text-field/textField.pr
 import ToastMarker from '../../../elements/toast-marker/ToastMaker';
 import { EToastMarker } from '../../../elements/toast-marker/ToastMaker.props';
 import { UserContext } from '../../../utils/Provider/UserProvider';
-import { createBooking, getAllBooking } from '../../../utils/api/booking';
+import { createBooking, deleteBooking, getAllBooking } from '../../../utils/api/booking';
 import { colors } from '../../../utils/theme/colors';
-import { getStartOrEndFromDate } from './calendar.function';
+import { convertDateTimeToObject, getStartOrEndFromDate } from './calendar.function';
 import { EStatus } from './calendar.props';
 import { getDatTime, handlePlusDateTime, onValid } from './calendar.rules';
 import * as styles from "./calendar.styles";
 
 const CalendarView = (props: any) => {
   const {
+    isModalDetail,
+    setIsModalDetail,
+    bookingDetail,
+    handleBookingDetail,
     isLoadingChild,
     handleCreated,
     date,
-    bookings,
+    events,
     isModalCreate,
     startField,
     endField,
@@ -34,11 +38,98 @@ const CalendarView = (props: any) => {
     setEndField,
     errors,
     onChangeRadio,
-    setIsModalCreate
+    setIsModalCreate,
+    handleDelete,
+    onChangeDate
   } = props;
+
+  const { user } = useContext(UserContext);
 
   return (
     <SafeAreaView style={styles.container}>
+      <ModalCustom
+        isVisible={isModalDetail}
+        onClose={() => {
+          console.log("close")
+        }}
+      >
+        <TextField
+          type={ETextType.BLUE}
+          typo={ETextField.medium}
+          text={`Lịch đặt của ${user?.userName}`}
+        />
+        <View style={styles.fieldContainer}>
+          <TextField
+            containerStyle={styles.textBox}
+            type={ETextType.BLUE}
+            typo={ETextField.small}
+            text={"Bắt đầu: "}
+          />
+          <View style={styles.dateTime}>
+            <DateTimePickerField
+              isDisabled={true}
+              data={convertDateTimeToObject(bookingDetail?.start)}
+            />
+          </View>
+        </View>
+        <View style={styles.fieldContainer}>
+          <TextField
+            containerStyle={styles.textBox}
+            type={ETextType.BLUE}
+            typo={ETextField.small}
+            text={"kết thúc: "}
+          />
+          <View style={styles.dateTime}>
+            <DateTimePickerField
+              data={convertDateTimeToObject(bookingDetail?.end)}
+              isDisabled={true}
+            />
+          </View>
+        </View>
+        <View style={styles.priceContainer}>
+          <TextField
+            containerStyle={styles.textBox}
+            type={ETextType.BLUE}
+            typo={ETextField.small}
+            text={"Loại: "}
+          />
+          <TextField
+            type={ETextType.BLUE}
+            typo={ETextField.small}
+            text={bookingDetail?.options}
+          />
+        </View>
+        <View style={styles.priceContainer}>
+          <TextField
+            containerStyle={styles.textBox}
+            type={ETextType.BLUE}
+            typo={ETextField.small}
+            text={"Giá: "}
+          />
+          <TextField
+            type={ETextType.BLUE}
+            typo={ETextField.small}
+            text={bookingDetail?.price}
+          />
+        </View>
+        <View style={styles.btnGroup}>
+          <View style={styles.btn}>
+            <ButtonCustom
+              isLoading={isLoadingChild}
+              type={EButton.submit}
+              onPress={() => handleDelete(bookingDetail)}
+              text="Xóa Lịch"
+            />
+          </View>
+          <View style={styles.btn}>
+            <ButtonCustom
+              type={EButton.delete}
+              onPress={() => setIsModalDetail(false)}
+              text="Huỷ"
+            />
+          </View>
+        </View>
+      </ModalCustom>
       {/* modal create */}
       <ModalCustom
         isVisible={isModalCreate}
@@ -169,12 +260,14 @@ const CalendarView = (props: any) => {
         date={date}
         bodyContainerStyle={styles.calendarContainer}
         mode="day"
-        events={bookings}
+        events={events}
+        onChangeDate={([start, end]) => onChangeDate(start)}
         height={600}
         renderEvent={(
           event: any,
           touchableOpacityProps: CalendarTouchableOpacityProps,
         ) => {
+          const isMine = Number(user?.userID) === Number(event?.title);
           return (
             <TouchableOpacity {...touchableOpacityProps}>
               <View style={{
@@ -185,13 +278,25 @@ const CalendarView = (props: any) => {
                   style={styles.textEvent}
                   type={ETextType.WHITE}
                   typo={ETextField.smaller}
-                  text={event?.title === "my-booking" ? `Bạn đặt` : "Đã được đặt"}
+                  text={isMine ? `Bạn đặt` : "Đã được đặt"}
                 />
               </View>
             </TouchableOpacity>
           )
         }}
         onPressCell={(date) => setIsModalCreate(true)}
+        onPressEvent={(event) => {
+          const isMine = Number(event?.title) === Number(user?.userID);
+          if (!isMine) {
+            ToastMarker({
+              type: EToastMarker.error,
+              text: "Đây không phải lịch của bạn"
+            })
+            return;
+          }
+          setIsModalDetail(true);
+          handleBookingDetail(event?.title)
+        }}
         eventCellStyle={styles.eventCell}
         headerContainerStyle={styles.headerStyle}
         overlapOffset={100}
@@ -210,8 +315,9 @@ const CalendarView = (props: any) => {
 
 const CalendarComponent = () => {
   const { user } = useContext(UserContext);
-  const [date, setDate] = useState(moment())
+  const [date, setDate] = useState(moment());
   const [bookings, setBookings] = useState([]);
+  const [events, setEvents] = useState([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isLoadingChild, setIsLoadingChild] = useState(false);
   const [isModalCreate, setIsModalCreate] = useState(false);
@@ -223,6 +329,9 @@ const CalendarComponent = () => {
     date: moment(handlePlusDateTime(moment())).add(30, "minute").toDate(),
     time: moment(handlePlusDateTime(moment())).add(30, "minute").toDate(),
   });
+
+  const [isModalDetail, setIsModalDetail] = useState(false);
+  const [bookingDetail, setBookingDetail] = useState({});
 
   const [options, setOptions] = useState({
     clear: true,
@@ -239,19 +348,20 @@ const CalendarComponent = () => {
 
   const onGetBooking = async (date: Moment) => {
     try {
-      const { data } = await getAllBooking(getStartOrEndFromDate(date));
+      const { data } = await getAllBooking(getStartOrEndFromDate(date, false));
+      setBookings(data?.data);
       const bookings = data?.data?.reduce((acc: any[], b: any) => {
-        const isMine = Number(b.userID) === Number(user.userID) ? "my-booking" : "other-booking"
+        const isMine = Number(b.userID) === Number(user.userID);
         const options = {
-          title: isMine,
+          title: b.userID,
           start: moment(b.start).toDate(),
           end: moment(b.end).toDate(),
-          color: Number(b.userID) === Number(user.userID) ? colors.green : colors.yellow
+          color: isMine ? colors.green : colors.yellow
         }
 
         return [...acc, options]
       }, []);
-      setBookings(bookings);
+      setEvents(bookings);
     } catch (error) {
       throw error;
     }
@@ -268,7 +378,13 @@ const CalendarComponent = () => {
         setIsLoading(false);
       }
     })()
-  }, [])
+  }, [date]);
+
+
+  const handleBookingDetail = (userID: string) => {
+    const detail = bookings.filter((b: any) => b?.userID === userID)[0];
+    setBookingDetail(detail);
+  }
 
 
   const onChangeRadio = (fieldName: string) => {
@@ -312,10 +428,11 @@ const CalendarComponent = () => {
     try {
       const { message } = await createBooking(params, user?.userID);
       await onGetBooking(date);
+      setIsModalCreate(!isModalCreate);
       ToastMarker({
         type: EToastMarker.success,
         text: message
-      })
+      });
     } catch (error: any) {
       ToastMarker({
         type: EToastMarker.error,
@@ -327,11 +444,36 @@ const CalendarComponent = () => {
 
   }
 
+  const onDelete = async (formData: any) => {
+    const { userID, start, end } = formData
+    const params = {
+      userID,
+      start,
+      end
+    }
+    setIsLoadingChild(true)
+    try {
+      await deleteBooking(params);
+      await onGetBooking(date);
+      setIsModalDetail(!isModalDetail);
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setIsLoadingChild(false)
+    }
+  }
+
   return WrapperComponent(CalendarView)({
+    isModalDetail,
+    setIsModalDetail,
+    bookingDetail,
+    handleBookingDetail: handleBookingDetail,
+    handleDelete: onDelete,
+    onChangeDate: setDate,
     isLoading,
     isLoadingChild,
     date,
-    bookings,
+    events,
     onChangeRadio,
     options,
     errors,

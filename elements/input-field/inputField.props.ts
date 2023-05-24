@@ -1,5 +1,5 @@
-import { ETextType } from './../text-field/textField.props';
 import { TextStyle } from "react-native";
+import { ETextType } from './../text-field/textField.props';
 
 export interface IInputField {
   maxLength?: number;
@@ -10,8 +10,9 @@ export interface IInputField {
   placeholderTextColor?: string;
   style?: TextStyle | TextStyle[];
   value: string;
-  type: ETextType,
-  isPasswordField?: boolean,
-  isDisabled?: boolean,
-  isRequired?: boolean
+  type: ETextType;
+  isPasswordField?: boolean;
+  isDisabled?: boolean;
+  isRequired?: boolean;
+  isError?: boolean;
 }
