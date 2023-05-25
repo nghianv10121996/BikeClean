@@ -28,6 +28,8 @@ import * as styles from "./index.styles";
 import Icon from 'react-native-vector-icons/Ionicons';
 import { ManagerMember } from '../screens/main/drawer/manager-member/ManagerMember';
 import { Booking } from '../screens/main/drawer/booking/Booking';
+import { Bookings } from '../screens/main/drawer/bookings/Bookings';
+import { ManagerProduct } from '../screens/main/drawer/manager-product/ManagerProduct';
 const Drawer = createDrawerNavigator();
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
@@ -128,7 +130,7 @@ const MainStack = ({ navigation }: any) => {
               name="managerMember"
               component={ManagerMember}
               options={{
-                headerTitle: "Quản lí tài khoản",
+                headerTitle: "Quản lí Nhân Viên",
                 headerTitleAlign: "center",
               }}
             />
@@ -136,7 +138,23 @@ const MainStack = ({ navigation }: any) => {
               name="booking"
               component={Booking}
               options={{
-                headerTitle: "Quản lí Lịch",
+                headerTitle: "Lịch cho nhân viên",
+                headerTitleAlign: "center",
+              }}
+            />
+            <Stack.Screen
+              name="bookings"
+              component={Bookings}
+              options={{
+                headerTitle: "Lịch cho nhân viên",
+                headerTitleAlign: "center",
+              }}
+            />
+            <Stack.Screen
+              name="Quản lí đơn hàng"
+              component={ManagerProduct}
+              options={{
+                headerTitle: "Quán lí đơn hàng",
                 headerTitleAlign: "center",
               }}
             />

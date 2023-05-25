@@ -1,29 +1,118 @@
 import moment, { Moment } from "moment";
-import React, { useContext, useEffect, useState } from "react";
-import { View } from "react-native";
+import React, { useEffect, useMemo, useState } from "react";
+import { TextInput, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { WrapperComponent } from "../../../../HOC/WrapperComponent/WrapperComponent";
 import { Empty } from "../../../../components/empty/Empy";
 import ButtonCustom from "../../../../elements/button-custom/buttonCustom";
 import { EButton } from "../../../../elements/button-custom/buttonCustom.props";
+import { Radio } from "../../../../elements/radio/Radio";
 import TextField from "../../../../elements/text-field/textField";
 import { ETextField, ETextType } from "../../../../elements/text-field/textField.props";
-import { UserContext } from "../../../../utils/Provider/UserProvider";
-import { changeStatusBooking, getNewBooking } from "../../../../utils/api/booking";
+import ToastMarker from "../../../../elements/toast-marker/ToastMaker";
+import { EToastMarker } from "../../../../elements/toast-marker/ToastMaker.props";
+import { changeStatusBooking, getBookingOfMember } from "../../../../utils/api/booking";
 import { formatDate, formatTime } from "../../../../utils/helper";
 import { colors } from "../../../../utils/theme/colors";
 import { EStatus } from "../../calendar/calendar.props";
-import * as styles from "./Booking.styles";
+import * as styles from "../booking/Booking.styles";
+import * as stylesOfBookings from "./Bookings.styles"
+import { ModalCustom } from "../../../../elements/modal-custom/modalCustom";
+import InputField from "../../../../elements/input-field/inputField";
 
-export const BookingView = (props: any) => {
-  const { bookings, onChangeStatus } = props;
+export const BookingsView = (props: any) => {
+  const {
+    bookings,
+    onChangeStatus,
+    status,
+    setStatus,
+    isShowModal,
+    setIsShowModal,
+    dataButtonPressed,
+    setDataButtonPressed,
+    comments,
+    setComments
+  } = props;
 
-  if (!bookings[0]) {
-    return <Empty />
-  }
+  // if (!bookings[0]) {
+  //   return <Empty />
+  // }
+
+  const confirmText = useMemo(() => {
+    return dataButtonPressed?.status === EStatus.created
+      ? "Bạn có chắc đổi trạng này?"
+      : "Vui lòng nhập nhận xét vể chất lượng đổi ngũ nhân viên, cùng với đánh giá."
+  }, [dataButtonPressed?.status])
 
   return (
     <ScrollView>
+      <View style={stylesOfBookings.statusContainer}>
+        <TextField
+          style={{
+            textAlign: "center"
+          }}
+          type={ETextType.BLUE}
+          typo={ETextField.small}
+          text={"Trạng Thái: "}
+        />
+        <Radio
+          checked={status === EStatus.processing}
+          value={EStatus.processing}
+          label="Đang làm"
+          onChange={() => {
+            if(status === EStatus.processing) {
+              return;
+            }
+            setStatus(EStatus.processing)
+          }}
+        />
+        <Radio
+          checked={status === EStatus.completed}
+          value={EStatus.completed}
+          label="Hoàn thành"
+          onChange={() => {
+            if(status === EStatus.completed) {
+              return;
+            }
+            setStatus(EStatus.completed)
+          }}
+        />
+      </View>
+      <ModalCustom isVisible={isShowModal} onClose={() => { }}>
+        <TextField
+          type={ETextType.BLACK}
+          typo={ETextField.small}
+          text={confirmText}
+          numberOfLines={5}
+        />
+        {
+          dataButtonPressed?.status === EStatus.completed && (
+            <TextInput
+              style={stylesOfBookings.comments}
+              multiline={true}
+              numberOfLines={5}
+              onChangeText={(text) => setComments(text)}
+              value={comments}
+            />
+          )
+        }
+        <View style={styles.btnGroup}>
+          <View style={styles.btnItem}>
+            <ButtonCustom
+              type={EButton.submit}
+              onPress={() => onChangeStatus(dataButtonPressed?.status, dataButtonPressed?.bookingID)}
+              text="Oke"
+            />
+          </View>
+          <View style={styles.btnItem}>
+            <ButtonCustom
+              type={EButton.delete}
+              onPress={() => setIsShowModal(false)}
+              text="Hủy"
+            />
+          </View>
+        </View>
+      </ModalCustom>
       {
         bookings?.map((b: any) => {
           let textContainerStyle = {};
@@ -72,7 +161,8 @@ export const BookingView = (props: any) => {
               break;
           }
 
-          const isDisabled = b.status === EStatus.completed || b.status === EStatus.cancel
+          const isDisabled = b.status === EStatus.cancel
+
           return (
             <View key={b?.bookingID} style={styles.cardContainer}>
               <TextField
@@ -131,18 +221,37 @@ export const BookingView = (props: any) => {
               <View style={styles.btnGroup}>
                 <View style={styles.btnItem}>
                   <ButtonCustom
-                    isDisabled={isDisabled || b.status === EStatus.processing}
+                    isDisabled={isDisabled || b.status === EStatus.created}
                     type={EButton.submit}
-                    onPress={() => onChangeStatus(EStatus.processing, b?.bookingID)}
-                    text="Nhận"
+                    onPress={() => {
+                      setIsShowModal(true);
+                      setDataButtonPressed({
+                        status: EStatus.created,
+                        bookingID: b?.bookingID
+                      });
+                    }}
+                    text="Không nhận"
                   />
                 </View>
                 <View style={styles.btnItem}>
                   <ButtonCustom
-                    isDisabled={isDisabled || b.status === EStatus.cancel}
+                    isDisabled={isDisabled || b.status === EStatus.completed}
                     type={EButton.submit}
-                    onPress={() => onChangeStatus(EStatus.cancel, b?.bookingID)}
-                    text="Hủy"
+                    onPress={() => {
+                      if (b.status === EStatus.processing) {
+                        setIsShowModal(true);
+                        setDataButtonPressed({
+                          status: EStatus.completed,
+                          bookingID: b?.bookingID
+                        })
+                      } else {
+                        ToastMarker({
+                          type: EToastMarker.error,
+                          text: `Vui lòng chuyển trạng thái "Đang làm" trước.`
+                        })
+                      }
+                    }}
+                    text="Hoàn thành"
                   />
                 </View>
               </View>
@@ -154,13 +263,18 @@ export const BookingView = (props: any) => {
   )
 }
 
-export const Booking = (props: any) => {
+export const Bookings = (props: any) => {
   const { route: { params: { memberId } } } = props;
-  const { user } = useContext(UserContext);
   const [isLoading, setIsLoading] = useState(false);
   const [bookings, setBookings] = useState([]);
   const [date, setDate] = useState(moment());
-  const [employee, setEmployee] = useState();
+  const [isShowModal, setIsShowModal] = useState(false);
+  const [status, setStatus] = useState(EStatus.processing);
+  const [dataButtonPressed, setDataButtonPressed] = useState({
+    status: EStatus.created,
+    bookingID: "",
+  });
+  const [comments, setComments] = useState("")
 
   const onGetBooking = async (date: Moment) => {
     let params = {
@@ -172,23 +286,20 @@ export const Booking = (props: any) => {
         hour: 20,
         minute: 0
       }).toISOString(),
-      status: EStatus.created
+      employeeID: memberId,
+      status: status
     }
 
-    console.log(params)
+    setIsLoading(true);
     try {
-      const { data } = await getNewBooking(params);
+      const { data } = await getBookingOfMember(params);
       setBookings(data?.data);
     } catch (error) {
       throw error;
+    } finally {
+      setIsLoading(false);
     }
   }
-
-  useEffect(() => {
-    (async () => {
-      await onGetBooking(date);
-    })()
-  }, [date]);
 
   const putChangeStatusBooking = async (params: any, bookingID: string) => {
     setIsLoading(true)
@@ -203,30 +314,45 @@ export const Booking = (props: any) => {
   }
 
   const onChangeStatus = async (status: EStatus, bookingID: string) => {
+    setIsShowModal(false);
     let params;
     switch (status) {
-      case EStatus.processing:
+      case EStatus.created:
         params = {
-          status: EStatus.processing,
-          employeeID: memberId,
-          comments: "",
+          status: EStatus.created,
+          employeeID: "",
+          comments: ""
         }
         await putChangeStatusBooking(params, bookingID);
         break;
-      case EStatus.cancel:
+      case EStatus.completed:
         params = {
-          status: EStatus.cancel,
-          employeeID: "",
-          comments: "",
+          status: EStatus.completed,
+          employeeID: memberId,
+          comments: comments
         }
         await putChangeStatusBooking(params, bookingID);
         break;
     }
   }
 
-  return WrapperComponent(BookingView)({
+  useEffect(() => {
+    (async () => {
+      await onGetBooking(date);
+    })()
+  }, [date, status]);
+
+  return WrapperComponent(BookingsView)({
     isLoading,
     bookings: bookings,
     onChangeStatus: onChangeStatus,
+    isShowModal,
+    setIsShowModal,
+    status,
+    setStatus: setStatus,
+    dataButtonPressed,
+    setDataButtonPressed: setDataButtonPressed,
+    comments,
+    setComments: setComments
   })
 }

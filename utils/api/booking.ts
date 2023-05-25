@@ -15,3 +15,11 @@ export const deleteBooking = (params: any) => {
 export const changeStatusBooking = (params: any, bookingID: string) => {
   return Api.put(`booking/${bookingID}`, params, true)
 }
+
+export const getNewBooking = (params: any) => {
+  return Api.get(`new-booking`, params, true)
+}
+
+export const getBookingOfMember = (params: any) => {
+  return Api.get(`booking/member`, params, true)
+}

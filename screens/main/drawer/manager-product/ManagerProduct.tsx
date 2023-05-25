@@ -7,20 +7,16 @@ import { Radio } from "../../../../elements/radio/Radio";
 import TextField from "../../../../elements/text-field/textField";
 import { ETextField, ETextType } from "../../../../elements/text-field/textField.props";
 import { getMember } from "../../../../utils/api/member";
-import * as styles from "./ManagerMember.styles";
+import * as styles from "./ManagerProduct.styles";
 import { navigate } from "../../../../helper/navigation";
 import ToastMarker from "../../../../elements/toast-marker/ToastMaker";
 import { EToastMarker } from "../../../../elements/toast-marker/ToastMaker.props";
 
-const ManagerMemberView = (props: any) => {
-  const [checkedValue, setCheckedValue] = useState("");
-
-  useEffect(() => {
-    console.log(checkedValue)
-  }, [checkedValue])
+const ManagerProductView = (props: any) => {
+  const [checkedValue, setCheckedValue] = useState("")
   return (
     <>
-      <ScrollView style={styles.container}>
+      {/* <ScrollView style={styles.container}>
         {
           props?.members?.map((member: any) => {
             return (
@@ -96,8 +92,8 @@ const ManagerMemberView = (props: any) => {
             )
           })
         }
-      </ScrollView>
-      <View style={styles.btnGroup}>
+      </ScrollView> */}
+      {/* <View style={styles.btnGroup}>
         <View style={styles.btnItem}>
           <ButtonCustom
             type={EButton.submit}
@@ -127,7 +123,7 @@ const ManagerMemberView = (props: any) => {
               }
               navigate("bookings", { memberId: checkedValue})
             }}
-            text="Đơn hàng"
+            text="Xem"
           />
         </View>
         <View style={styles.btnItem}>
@@ -146,27 +142,27 @@ const ManagerMemberView = (props: any) => {
             text="Xóa nhân viên"
           />
         </View>
-      </View>
+      </View> */}
     </>
   )
 }
 
-export const ManagerMember = () => {
+export const ManagerProduct = () => {
   const [members, setMembers] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    (async () => {
-      setIsLoading(true);
-      try {
-        const { data } = await getMember();
-        setMembers(data.members)
-      } catch (error) {
-      } finally {
-        setIsLoading(false);
-      }
-    })();
-  }, []);
+//   useEffect(() => {
+//     (async () => {
+//       setIsLoading(true);
+//       try {
+//         const { data } = await getMember();
+//         setMembers(data.members)
+//       } catch (error) {
+//       } finally {
+//         setIsLoading(false);
+//       }
+//     })();
+//   }, []);
 
-  return WrapperComponent(ManagerMemberView)({ isLoading, members })
+  return WrapperComponent(ManagerProductView)({ isLoading, members })
 }
