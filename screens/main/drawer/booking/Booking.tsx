@@ -3,9 +3,9 @@ import React, { useContext, useEffect, useState } from "react";
 import { View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { WrapperComponent } from "../../../../HOC/WrapperComponent/WrapperComponent";
-import { Empty } from "../../../../components/empty/Empy";
 import ButtonCustom from "../../../../elements/button-custom/buttonCustom";
 import { EButton } from "../../../../elements/button-custom/buttonCustom.props";
+import { ModalCustom } from "../../../../elements/modal-custom/modalCustom";
 import TextField from "../../../../elements/text-field/textField";
 import { ETextField, ETextType } from "../../../../elements/text-field/textField.props";
 import { UserContext } from "../../../../utils/Provider/UserProvider";
@@ -16,14 +16,43 @@ import { EStatus } from "../../calendar/calendar.props";
 import * as styles from "./Booking.styles";
 
 export const BookingView = (props: any) => {
-  const { bookings, onChangeStatus } = props;
-
-  if (!bookings[0]) {
-    return <Empty />
-  }
+  const {
+    bookings,
+    onChangeStatus,
+    isShowModal,
+    setIsShowModal,
+    dataButtonPressed,
+    setDataButtonPressed
+  } = props;
 
   return (
     <ScrollView>
+      <ModalCustom isVisible={isShowModal} onClose={() => { }}>
+        <TextField
+          type={ETextType.BLACK}
+          typo={ETextField.small}
+          text={`Bạn có chắc muốn "Hủy" đơn hàng này?`}
+          numberOfLines={5}
+        />
+        <View style={styles.btnGroup}>
+          <View style={styles.btnItem}>
+            <ButtonCustom
+              type={EButton.submit}
+              onPress={() => onChangeStatus(
+                dataButtonPressed?.status, dataButtonPressed?.bookingID
+              )}
+              text="Oke"
+            />
+          </View>
+          <View style={styles.btnItem}>
+            <ButtonCustom
+              type={EButton.delete}
+              onPress={() => setIsShowModal(false)}
+              text="Hủy"
+            />
+          </View>
+        </View>
+      </ModalCustom>
       {
         bookings?.map((b: any) => {
           let textContainerStyle = {};
@@ -133,7 +162,13 @@ export const BookingView = (props: any) => {
                   <ButtonCustom
                     isDisabled={isDisabled || b.status === EStatus.processing}
                     type={EButton.submit}
-                    onPress={() => onChangeStatus(EStatus.processing, b?.bookingID)}
+                    onPress={() => {
+                      setIsShowModal(true);
+                      setDataButtonPressed({
+                        status: EStatus.processing,
+                        bookingID: b?.bookingID
+                      });
+                    }}
                     text="Nhận"
                   />
                 </View>
@@ -141,7 +176,13 @@ export const BookingView = (props: any) => {
                   <ButtonCustom
                     isDisabled={isDisabled || b.status === EStatus.cancel}
                     type={EButton.submit}
-                    onPress={() => onChangeStatus(EStatus.cancel, b?.bookingID)}
+                    onPress={() => {
+                      setIsShowModal(true);
+                      setDataButtonPressed({
+                        status: EStatus.cancel,
+                        bookingID: b?.bookingID
+                      });
+                    }}
                     text="Hủy"
                   />
                 </View>
@@ -160,7 +201,9 @@ export const Booking = (props: any) => {
   const [isLoading, setIsLoading] = useState(false);
   const [bookings, setBookings] = useState([]);
   const [date, setDate] = useState(moment());
-  const [employee, setEmployee] = useState();
+  const [isShowModal, setIsShowModal] = useState<boolean>(false);
+  const [dataButtonPressed, setDataButtonPressed] = useState();
+  const [status, setStatus] = useState(EStatus.created);
 
   const onGetBooking = async (date: Moment) => {
     let params = {
@@ -175,7 +218,6 @@ export const Booking = (props: any) => {
       status: EStatus.created
     }
 
-    console.log(params)
     try {
       const { data } = await getNewBooking(params);
       setBookings(data?.data);
@@ -203,6 +245,7 @@ export const Booking = (props: any) => {
   }
 
   const onChangeStatus = async (status: EStatus, bookingID: string) => {
+    setIsShowModal(false);
     let params;
     switch (status) {
       case EStatus.processing:
@@ -210,6 +253,7 @@ export const Booking = (props: any) => {
           status: EStatus.processing,
           employeeID: memberId,
           comments: "",
+          labelComments: ""
         }
         await putChangeStatusBooking(params, bookingID);
         break;
@@ -218,6 +262,7 @@ export const Booking = (props: any) => {
           status: EStatus.cancel,
           employeeID: "",
           comments: "",
+          labelComments: ""
         }
         await putChangeStatusBooking(params, bookingID);
         break;
@@ -228,5 +273,9 @@ export const Booking = (props: any) => {
     isLoading,
     bookings: bookings,
     onChangeStatus: onChangeStatus,
+    isShowModal,
+    setIsShowModal: setIsShowModal,
+    dataButtonPressed,
+    setDataButtonPressed: setDataButtonPressed,
   })
 }

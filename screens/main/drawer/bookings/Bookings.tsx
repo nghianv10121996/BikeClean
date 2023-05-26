@@ -3,9 +3,9 @@ import React, { useEffect, useMemo, useState } from "react";
 import { TextInput, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { WrapperComponent } from "../../../../HOC/WrapperComponent/WrapperComponent";
-import { Empty } from "../../../../components/empty/Empy";
 import ButtonCustom from "../../../../elements/button-custom/buttonCustom";
 import { EButton } from "../../../../elements/button-custom/buttonCustom.props";
+import { ModalCustom } from "../../../../elements/modal-custom/modalCustom";
 import { Radio } from "../../../../elements/radio/Radio";
 import TextField from "../../../../elements/text-field/textField";
 import { ETextField, ETextType } from "../../../../elements/text-field/textField.props";
@@ -16,9 +16,8 @@ import { formatDate, formatTime } from "../../../../utils/helper";
 import { colors } from "../../../../utils/theme/colors";
 import { EStatus } from "../../calendar/calendar.props";
 import * as styles from "../booking/Booking.styles";
-import * as stylesOfBookings from "./Bookings.styles"
-import { ModalCustom } from "../../../../elements/modal-custom/modalCustom";
-import InputField from "../../../../elements/input-field/inputField";
+import { ELabelStatus } from "./Bookings.props";
+import * as stylesOfBookings from "./Bookings.styles";
 
 export const BookingsView = (props: any) => {
   const {
@@ -31,18 +30,16 @@ export const BookingsView = (props: any) => {
     dataButtonPressed,
     setDataButtonPressed,
     comments,
-    setComments
+    setComments,
+    labelStatus,
+    setLabelStatus
   } = props;
-
-  // if (!bookings[0]) {
-  //   return <Empty />
-  // }
 
   const confirmText = useMemo(() => {
     return dataButtonPressed?.status === EStatus.created
       ? "Bạn có chắc đổi trạng này?"
       : "Vui lòng nhập nhận xét vể chất lượng đổi ngũ nhân viên, cùng với đánh giá."
-  }, [dataButtonPressed?.status])
+  }, [dataButtonPressed?.status]);
 
   return (
     <ScrollView>
@@ -60,7 +57,7 @@ export const BookingsView = (props: any) => {
           value={EStatus.processing}
           label="Đang làm"
           onChange={() => {
-            if(status === EStatus.processing) {
+            if (status === EStatus.processing) {
               return;
             }
             setStatus(EStatus.processing)
@@ -71,7 +68,7 @@ export const BookingsView = (props: any) => {
           value={EStatus.completed}
           label="Hoàn thành"
           onChange={() => {
-            if(status === EStatus.completed) {
+            if (status === EStatus.completed) {
               return;
             }
             setStatus(EStatus.completed)
@@ -87,6 +84,89 @@ export const BookingsView = (props: any) => {
         />
         {
           dataButtonPressed?.status === EStatus.completed && (
+            <>
+              <TextField
+                containerStyle={stylesOfBookings.labelTitle}
+                type={ETextType.BLACK}
+                typo={ETextField.small}
+                text={"Đánh giá: "}
+                numberOfLines={5}
+              />
+              <View style={stylesOfBookings.labelStatusContainer}>
+                <TextField
+                  onPress={() => setLabelStatus(ELabelStatus.good)}
+                  containerStyle={[
+                    stylesOfBookings.labelStatus,
+                    labelStatus === ELabelStatus.good
+                      ? stylesOfBookings?.labelStatusActive : {}
+                  ]}
+                  style={{
+                    textAlign: "center"
+                  }}
+                  type={
+                    labelStatus === ELabelStatus.good
+                      ? ETextType.WHITE : ETextType.BLACK
+                  }
+                  typo={ETextField.smaller}
+                  text={"Tốt"}
+                />
+                <TextField
+                  onPress={() => setLabelStatus(ELabelStatus.normal)}
+                  containerStyle={[
+                    stylesOfBookings.labelStatus,
+                    labelStatus === ELabelStatus.normal
+                      ? stylesOfBookings?.labelStatusActive : {}
+                  ]}
+                  style={{
+                    textAlign: "center"
+                  }}
+                  type={
+                    labelStatus === ELabelStatus.normal
+                      ? ETextType.WHITE : ETextType.BLACK
+                  }
+                  typo={ETextField.smaller}
+                  text={"Bình Thường"}
+                />
+                <TextField
+                  onPress={() => setLabelStatus(ELabelStatus.bad)}
+                  containerStyle={[
+                    stylesOfBookings.labelStatus,
+                    labelStatus === ELabelStatus.bad
+                      ? stylesOfBookings?.labelStatusActive : {}
+                  ]}
+                  style={{
+                    textAlign: "center"
+                  }}
+                  type={
+                    labelStatus === ELabelStatus.bad
+                      ? ETextType.WHITE : ETextType.BLACK
+                  }
+                  typo={ETextField.smaller}
+                  text={"Tệ"}
+                />
+                <TextField
+                  onPress={() => setLabelStatus(ELabelStatus.veryBad)}
+                  containerStyle={[
+                    stylesOfBookings.labelStatus,
+                    labelStatus === ELabelStatus.veryBad
+                      ? stylesOfBookings?.labelStatusActive : {}
+                  ]}
+                  style={{
+                    textAlign: "center"
+                  }}
+                  type={
+                    labelStatus === ELabelStatus.veryBad
+                      ? ETextType.WHITE : ETextType.BLACK
+                  }
+                  typo={ETextField.smaller}
+                  text={"Rất tệ"}
+                />
+              </View>
+            </>
+          )
+        }
+        {
+          dataButtonPressed?.status === EStatus.completed && (
             <TextInput
               style={stylesOfBookings.comments}
               multiline={true}
@@ -100,7 +180,9 @@ export const BookingsView = (props: any) => {
           <View style={styles.btnItem}>
             <ButtonCustom
               type={EButton.submit}
-              onPress={() => onChangeStatus(dataButtonPressed?.status, dataButtonPressed?.bookingID)}
+              onPress={() => onChangeStatus(
+                dataButtonPressed?.status, dataButtonPressed?.bookingID
+              )}
               text="Oke"
             />
           </View>
@@ -274,7 +356,8 @@ export const Bookings = (props: any) => {
     status: EStatus.created,
     bookingID: "",
   });
-  const [comments, setComments] = useState("")
+  const [comments, setComments] = useState("");
+  const [labelStatus, setLabelStatus] = useState(ELabelStatus?.normal);
 
   const onGetBooking = async (date: Moment) => {
     let params = {
@@ -321,7 +404,8 @@ export const Bookings = (props: any) => {
         params = {
           status: EStatus.created,
           employeeID: "",
-          comments: ""
+          comments: "",
+          labelComments: ""
         }
         await putChangeStatusBooking(params, bookingID);
         break;
@@ -329,7 +413,8 @@ export const Bookings = (props: any) => {
         params = {
           status: EStatus.completed,
           employeeID: memberId,
-          comments: comments
+          comments: comments,
+          labelComments: labelStatus
         }
         await putChangeStatusBooking(params, bookingID);
         break;
@@ -353,6 +438,8 @@ export const Bookings = (props: any) => {
     dataButtonPressed,
     setDataButtonPressed: setDataButtonPressed,
     comments,
-    setComments: setComments
+    setComments: setComments,
+    labelStatus,
+    setLabelStatus: setLabelStatus
   })
 }
