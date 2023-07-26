@@ -47,7 +47,7 @@ export const InputField = (props: IInputField) => {
       {
         !!isPasswordField && (
           <TouchableOpacity onPress={onChangeRoles}>
-            <Icon name={iconName} size={20} color={colors.blue} />
+            <Icon name={iconName} size={16} color={colors.blue} />
           </TouchableOpacity>
         )
       }

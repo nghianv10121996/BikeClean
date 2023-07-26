@@ -1,168 +1,180 @@
+import moment from "moment";
 import React, { useEffect, useState } from "react";
-import { Image, ScrollView, View } from "react-native";
+import { FlatList, View } from "react-native";
 import { WrapperComponent } from "../../../../HOC/WrapperComponent/WrapperComponent";
-import ButtonCustom from "../../../../elements/button-custom/buttonCustom";
-import { EButton } from "../../../../elements/button-custom/buttonCustom.props";
-import { Radio } from "../../../../elements/radio/Radio";
 import TextField from "../../../../elements/text-field/textField";
 import { ETextField, ETextType } from "../../../../elements/text-field/textField.props";
-import { getMember } from "../../../../utils/api/member";
+import { getAllBooking } from "../../../../utils/api/booking";
+import { colors } from "../../../../utils/theme/colors";
+import { getStartOrEndOfMonthFromDate } from "../../calendar/calendar.function";
+import { EStatus } from "../../calendar/calendar.props";
+import { getCountOfStatus } from "./ManagerProduct.function";
 import * as styles from "./ManagerProduct.styles";
-import { navigate } from "../../../../helper/navigation";
-import ToastMarker from "../../../../elements/toast-marker/ToastMaker";
-import { EToastMarker } from "../../../../elements/toast-marker/ToastMaker.props";
 
 const ManagerProductView = (props: any) => {
-  const [checkedValue, setCheckedValue] = useState("")
+  const numberOfCancel = getCountOfStatus(props.bookings, EStatus.cancel);
+  const numberOfCompleted = getCountOfStatus(props.bookings, EStatus.completed);
   return (
     <>
-      {/* <ScrollView style={styles.container}>
-        {
-          props?.members?.map((member: any) => {
-            return (
-              <View
-                key={member.userID}
-                style={styles.cardContainer}
-              >
-                <Image
-                  source={{
-                    uri: member?.image
-                  }}
-                  style={styles.image}
-                  resizeMode="cover"
+      <TextField
+        containerStyle={styles.label}
+        type={ETextType.WHITE}
+        typo={ETextField.smaller}
+        text={"Thống kê"}
+      />
+      <View>
+        <View style={styles.statistic}>
+          <TextField
+            type={ETextType.BLACK}
+            typo={ETextField.smaller}
+            text={"Đơn hàng/ tháng: "}
+          />
+          <TextField
+            type={ETextType.BLACK}
+            typo={ETextField.smaller}
+            text={props?.bookings?.length}
+          />
+        </View>
+        <View style={styles.statistic}>
+          <TextField
+            type={ETextType.BLACK}
+            typo={ETextField.smaller}
+            text={"Đơn hàng bị hủy/ tháng: "}
+          />
+          <TextField
+            type={ETextType.BLACK}
+            typo={ETextField.smaller}
+            text={numberOfCancel}
+          />
+        </View>
+        <View style={styles.statistic}>
+          <TextField
+            type={ETextType.BLACK}
+            typo={ETextField.smaller}
+            text={"Đơn hàng đã xong/ tháng:  "}
+          />
+          <TextField
+            type={ETextType.BLACK}
+            typo={ETextField.smaller}
+            text={numberOfCompleted}
+          />
+        </View>
+      </View>
+      <FlatList
+        data={props.bookings}
+        keyExtractor={(b) => b?.bookingID}
+        renderItem={({ item }) => {
+          let textContainerStyle = {};
+          let statusTxt = "";
+          switch (item.status) {
+            case EStatus.created:
+              textContainerStyle = {
+                ...styles.status,
+                backgroundColor: colors.green,
+              }
+              statusTxt = "Đang chờ"
+              break;
+            case EStatus.completed:
+              textContainerStyle = {
+                ...styles.status,
+                backgroundColor: colors.red,
+              }
+              statusTxt = "Đã hoàn thành"
+              break;
+            case EStatus.processing:
+              textContainerStyle = {
+                ...styles.status,
+                backgroundColor: colors.yellow,
+              }
+              statusTxt = "Đang làm"
+              break;
+            case EStatus.cancel:
+              textContainerStyle = {
+                ...styles.status,
+                backgroundColor: colors.grey,
+              }
+              statusTxt = "Hủy"
+              break;
+          }
+          return (
+            <View style={styles.cardContainer}>
+              <View style={styles.cardItem}>
+                <TextField
+                  containerStyle={styles.label}
+                  type={ETextType.WHITE}
+                  typo={ETextField.smaller}
+                  text={"ID"}
                 />
-                <View style={styles.textContainer}>
-                  <View style={styles.textBox}>
-                    <TextField
-                      type={ETextType.BLACK}
-                      typo={ETextField.smaller}
-                      text={"Tên: "}
-                    />
-                    <TextField
-                      type={ETextType.BLACK}
-                      typo={ETextField.smaller}
-                      text={member?.userName}
-                    />
-                  </View>
-                  <View style={styles.textBox}>
-                    <TextField
-                      type={ETextType.BLACK}
-                      typo={ETextField.smaller}
-                      text={"SĐT: "}
-                    />
-                    <TextField
-                      type={ETextType.BLACK}
-                      typo={ETextField.smaller}
-                      text={member?.phoneNumber}
-                    />
-                  </View>
-                  <View style={styles.textBox}>
-                    <TextField
-                      type={ETextType.BLACK}
-                      typo={ETextField.smaller}
-                      text={"SL/Tháng: "}
-                    />
-                    <TextField
-                      type={ETextType.BLACK}
-                      typo={ETextField.smaller}
-                      text={"0"}
-                    />
-                  </View>
-                  <View style={styles.textBox}>
-                    <TextField
-                      type={ETextType.BLACK}
-                      typo={ETextField.smaller}
-                      text={"Đánh giá: "}
-                    />
-                    <TextField
-                      type={ETextType.BLACK}
-                      typo={ETextField.smaller}
-                      text={"good"}
-                    />
-                  </View>
-                </View>
-                <View>
-                  <Radio
-                    checked={checkedValue === member?.userID}
-                    value={member?.userID}
-                    onChange={() => setCheckedValue(member?.userID)}
-                  />
-                </View>
+                <TextField
+                  containerStyle={styles.labelText}
+                  type={ETextType.BLACK}
+                  typo={ETextField.smaller}
+                  text={item?.bookingID}
+                />
               </View>
-            )
-          })
-        }
-      </ScrollView> */}
-      {/* <View style={styles.btnGroup}>
-        <View style={styles.btnItem}>
-          <ButtonCustom
-            type={EButton.submit}
-            onPress={() => {
-              if(!checkedValue) {
-                ToastMarker({
-                  type: EToastMarker.error,
-                  text: "Bạn cần chọn nhân viên để tiếp tục."
-                })
-                return;
-              }
-              navigate("booking", { memberId: checkedValue})
-            }}
-            text="Lấy lịch"
-          />
-        </View>
-        <View style={styles.btnItem}>
-          <ButtonCustom
-            type={EButton.submit}
-            onPress={() => {
-              if(!checkedValue) {
-                ToastMarker({
-                  type: EToastMarker.error,
-                  text: "Bạn cần chọn nhân viên để tiếp tục."
-                })
-                return;
-              }
-              navigate("bookings", { memberId: checkedValue})
-            }}
-            text="Xem"
-          />
-        </View>
-        <View style={styles.btnItem}>
-          <ButtonCustom
-            type={EButton.submit}
-            onPress={() => {
-              if(!checkedValue) {
-                ToastMarker({
-                  type: EToastMarker.error,
-                  text: "Bạn cần chọn nhân viên để tiếp tục."
-                })
-                return;
-              }
-
-            }}
-            text="Xóa nhân viên"
-          />
-        </View>
-      </View> */}
+              <View style={styles.cardItem}>
+                <TextField
+                  containerStyle={styles.label}
+                  type={ETextType.WHITE}
+                  typo={ETextField.smaller}
+                  text={"Trạng thái"}
+                />
+                <TextField
+                  containerStyle={[styles.labelText, textContainerStyle]}
+                  type={ETextType.WHITE}
+                  typo={ETextField.smaller}
+                  text={statusTxt}
+                />
+              </View>
+              <View style={styles.cardItem}>
+                <TextField
+                  containerStyle={styles.label}
+                  type={ETextType.WHITE}
+                  typo={ETextField.smaller}
+                  text={"Đánh giá"}
+                />
+                {
+                  !!item?.labelComments ? (
+                    <TextField
+                      containerStyle={{ ...styles.labelText, backgroundColor: colors.green }}
+                      type={ETextType.WHITE}
+                      typo={ETextField.smaller}
+                      text={item?.labelComments}
+                    />
+                  ) : <TextField
+                    containerStyle={{ ...styles.labelText, backgroundColor: colors.green }}
+                    type={ETextType.WHITE}
+                    typo={ETextField.smaller}
+                    text={"Chưa có"}
+                  />
+                }
+              </View>
+            </View>
+          )
+        }}
+      />
     </>
   )
 }
 
 export const ManagerProduct = () => {
-  const [members, setMembers] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [bookings, setBookings] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [date, setDate] = useState(moment())
 
-//   useEffect(() => {
-//     (async () => {
-//       setIsLoading(true);
-//       try {
-//         const { data } = await getMember();
-//         setMembers(data.members)
-//       } catch (error) {
-//       } finally {
-//         setIsLoading(false);
-//       }
-//     })();
-//   }, []);
+  useEffect(() => {
+    (async () => {
+      setIsLoading(true);
+      try {
+        const { data } = await getAllBooking(getStartOrEndOfMonthFromDate(date, true));
+        const dataBookings = data?.data;
+        setBookings(dataBookings);
+      } catch (error) {
+      } finally {
+        setIsLoading(false);
+      }
+    })();
+  }, [date]);
 
-  return WrapperComponent(ManagerProductView)({ isLoading, members })
+  return WrapperComponent(ManagerProductView)({ isLoading, bookings })
 }

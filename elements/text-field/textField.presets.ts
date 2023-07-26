@@ -3,7 +3,7 @@ import { ETextField, ETextType } from "./textField.props";
 import { colors } from '../../utils/theme/colors';
 
 const BASE = {
-  fontSize: 16,
+  fontSize: 12,
   fontStyle: "normal",
   fontFamily: "OpenSans-Regular"
 } as TextStyle
@@ -11,7 +11,7 @@ const BASE = {
 export const PRESETS: Record<ETextField, any> = {
   [ETextField.small]: {
     ...BASE,
-    fontSize: 18,
+    fontSize: 14,
     fontFamily: "OpenSans-Regular"
   } as TextStyle,
   [ETextField.smaller]: {
@@ -21,13 +21,13 @@ export const PRESETS: Record<ETextField, any> = {
   } as TextStyle,
   [ETextField.medium]: {
     ...BASE,
-    fontSize: 22,
+    fontSize: 18,
     fontWeight: "500",
     fontFamily: "OpenSans-Medium"
   } as TextStyle,
   [ETextField.large]: {
     ...BASE,
-    fontSize: 26,
+    fontSize: 22,
     fontWeight: "700",
     fontFamily: "OpenSans-SemiBold",
   } as TextStyle

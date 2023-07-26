@@ -16,6 +16,7 @@ import { getToken, getUser } from "../../../utils/api/user";
 import { CONSTANTS } from "../../../utils/constants/constants";
 import { schema } from "./login.rules";
 import * as styles from "./login.styles";
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const Login = () => {
   const { user, setUser } = useContext(UserContext);
@@ -50,7 +51,7 @@ const Login = () => {
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Image
         style={styles.image}
         resizeMode="contain"
@@ -144,7 +145,7 @@ const Login = () => {
           text={"Đăng kí tài khoản."}
         />
       </View>
-    </View>
+    </SafeAreaView>
   )
 }
 

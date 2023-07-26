@@ -17,10 +17,8 @@ export const getDatTime = (data: IData) => {
 export const handlePlusDateTime = (data: Moment) => {
   const hour = moment(data).get("hour");
   const time = moment(data).get("minute");
-  const field = moment(data).set({
-    hour: time > 30 ? (hour + 1) : hour,
-    minute: time > 30 ? 0 : 30
-  }).toDate();
+  const field = moment(data).toDate();
+
   return field;
 }
 

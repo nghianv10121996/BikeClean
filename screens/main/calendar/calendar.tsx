@@ -428,7 +428,6 @@ const CalendarComponent = () => {
     try {
       const { message } = await createBooking(params, user?.userID);
       await onGetBooking(date);
-      setIsModalCreate(!isModalCreate);
       ToastMarker({
         type: EToastMarker.success,
         text: message
@@ -439,7 +438,8 @@ const CalendarComponent = () => {
         text: error?.message
       })
     } finally {
-      setIsLoadingChild(false)
+      setIsLoadingChild(false);
+      setIsModalCreate(false);
     }
 
   }
@@ -453,13 +453,21 @@ const CalendarComponent = () => {
     }
     setIsLoadingChild(true)
     try {
-      await deleteBooking(params);
+      const { data } = await deleteBooking(params);
       await onGetBooking(date);
-      setIsModalDetail(!isModalDetail);
-    } catch (error) {
-      console.log(error)
+      ToastMarker({
+        type: EToastMarker.success,
+        text: data?.message
+      });
+    } catch (error: any) {
+      console.log(error);
+      ToastMarker({
+        type: EToastMarker.error,
+        text: error?.message
+      })
     } finally {
-      setIsLoadingChild(false)
+      setIsLoadingChild(false);
+      setIsModalDetail(false);
     }
   }
 

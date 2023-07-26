@@ -87,7 +87,7 @@ export const DateTimePickerField = ({
               if (event?.type === "dismissed") {
                 return;
               }
-              onChangeDate({
+              onChangeDate?.({
                 ...data,
                 [mode]: moment(date).toDate()
               });

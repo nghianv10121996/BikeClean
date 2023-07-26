@@ -15,9 +15,6 @@ import { EToastMarker } from "../../../../elements/toast-marker/ToastMaker.props
 const ManagerMemberView = (props: any) => {
   const [checkedValue, setCheckedValue] = useState("");
 
-  useEffect(() => {
-    console.log(checkedValue)
-  }, [checkedValue])
   return (
     <>
       <ScrollView style={styles.container}>

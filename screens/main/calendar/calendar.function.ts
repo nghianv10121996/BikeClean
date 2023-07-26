@@ -8,10 +8,11 @@ export const getStartOrEndFromDate = (date: Moment, isAll: boolean = true) => {
   }
 }
 
-export const getStartOrEndOfMonthFromDate = (date: Moment) => {
+export const getStartOrEndOfMonthFromDate = (date: Moment, isAll: boolean = true) => {
   return {
     start: moment(date).startOf("month").toISOString(),
-    end: moment(date).endOf("month").toISOString()
+    end: moment(date).endOf("month").toISOString(),
+    isAll: isAll
   }
 }
 

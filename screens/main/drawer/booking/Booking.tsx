@@ -162,13 +162,7 @@ export const BookingView = (props: any) => {
                   <ButtonCustom
                     isDisabled={isDisabled || b.status === EStatus.processing}
                     type={EButton.submit}
-                    onPress={() => {
-                      setIsShowModal(true);
-                      setDataButtonPressed({
-                        status: EStatus.processing,
-                        bookingID: b?.bookingID
-                      });
-                    }}
+                    onPress={() => onChangeStatus(EStatus.processing, b?.bookingID)}
                     text="Nhận"
                   />
                 </View>

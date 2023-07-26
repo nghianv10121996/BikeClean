@@ -151,10 +151,10 @@ const MainStack = ({ navigation }: any) => {
               }}
             />
             <Stack.Screen
-              name="Quản lí đơn hàng"
+              name="managerProduct"
               component={ManagerProduct}
               options={{
-                headerTitle: "Quán lí đơn hàng",
+                headerTitle: "Lịch cho nhân viên",
                 headerTitleAlign: "center",
               }}
             />
@@ -293,19 +293,34 @@ const CustomDrawerContent = ({ navigation, routesName }: any) => {
       />
       {
         user?.roles === "admin" && (
-          <DrawerItem
-            icon={({ focused, color, size }) => <Icon color={colors.blue} size={size} name={"people-circle"} />}
-            focused={focusField.managerMember}
-            pressColor={colors.grey}
-            labelStyle={{
-              color: colors.blue
-            }}
-            label={'Quản lí nhân viên'}
-            onPress={() => {
-              navigation.dispatch(DrawerActions.closeDrawer());
-              navigation.navigate("managerMember")
-            }}
-          />
+          <>
+            <DrawerItem
+              icon={({ focused, color, size }) => <Icon color={colors.blue} size={size} name={"people-circle"} />}
+              focused={focusField.managerMember}
+              pressColor={colors.grey}
+              labelStyle={{
+                color: colors.blue
+              }}
+              label={'Quản lí nhân viên'}
+              onPress={() => {
+                navigation.dispatch(DrawerActions.closeDrawer());
+                navigation.navigate("managerMember")
+              }}
+            />
+               <DrawerItem
+              icon={({ focused, color, size }) => <Icon color={colors.blue} size={size} name={"clipboard"} />}
+              focused={focusField.managerMember}
+              pressColor={colors.grey}
+              labelStyle={{
+                color: colors.blue
+              }}
+              label={'Quản lí đơn hàng'}
+              onPress={() => {
+                navigation.dispatch(DrawerActions.closeDrawer());
+                navigation.navigate("managerProduct")
+              }}
+            />
+          </>
         )
       }
       <DrawerItem

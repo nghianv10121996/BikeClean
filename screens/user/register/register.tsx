@@ -17,6 +17,7 @@ import { colors } from "../../../utils/theme/colors";
 import * as styles from "../login/login.styles";
 import * as reStyles from "../register/register.styles";
 import { schema } from "./register.rules";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const Register = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -56,7 +57,7 @@ const Register = () => {
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Icon size={80} name="person-add-outline" color={colors.blue} />
       <View style={styles.inputBox}>
         <View style={styles.inputContainer}>
@@ -216,7 +217,7 @@ const Register = () => {
           />
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   )
 }
 
